@@ -1,0 +1,205 @@
+# # #######################################################################################################################
+# # # Utility functions for visualisation and evaluation.                                                                 #
+# # # Author:               Daniel Schirmacher                                                                            #
+# # #                       PhD Student, Cell Systems Dynamics Group, D-BSSE, ETH Zurich                                  #
+# # # Python Version:       3.8.7                                                                                         #
+# # # PyTorch Version:      1.7.1                                                                                         #
+# # #######################################################################################################################
+# import cv2
+# import matplotlib.pyplot as plt
+# import numpy as np
+
+# def plot_sample(sample):
+#     '''
+#         Plots img/flu tensor pairs as returned by TrainDataset.
+
+
+#         Parameter
+#         ---------
+
+#         sample: dict
+#             Dictionary of form {"img": image, "flu": image}.
+
+
+#         Return
+#         ------
+
+#         -
+#     '''
+#     img, flu = sample['img'], sample['flu']
+
+#     img_max = img.max().tolist() * 65535
+#     flu_max = flu.max().tolist() * 65535
+
+#     plt.subplot(121)
+#     plt.imshow(img.permute(1, 2, 0)[:, :, 0]*65535, cmap='gray', vmin=0, vmax=img_max)
+#     plt.title('BF')
+#     plt.subplot(122)
+#     plt.imshow(flu.permute(1, 2, 0)[:, :, 0]*65535, cmap='gray', vmin=0, vmax=flu_max)
+#     plt.title('Flu')
+
+#     plt.show()
+
+
+# def iou(gt, pred):
+#     """
+#     Compute Intersection over Union for groundtruth and prediction. Derived from:
+#     Caicedo_Carpenter (2019). Evaluation of deep learning strategies for nucleus segmentation in Fluorescence Images
+
+
+#     Parameters
+#     ----------
+
+#     gt: tensors of float32
+#         Tensor of shape (#samples, #channels, height, width) with elements in range [0, 1].
+
+#     pred: tensor of float32
+#         Tensor of shape (#samples, #channels, height, width) with elements in {0, 1}.
+
+
+#     Return
+#     ------
+
+#     Returns list of arrays, IoU, with len #samples.
+#     """
+#     assert (
+#         gt.size() == pred.size()
+#     ), f"Size of gt {gt.size()} and size of pred {pred.size()} are not matching."
+
+#     IOU = []
+
+#     for sample in zip(gt, pred):
+#         # convert semantic segmentation to instance segmentation
+#         gt_tmp, pred_tmp = sample[0].cpu().numpy(), sample[1].cpu().numpy()
+#         pred_tmp[pred_tmp >= 0.5] = 1.0
+#         pred_tmp[pred_tmp < 0.5] = 0.0
+
+#         gt_tmp *= 255
+#         pred_tmp *= 255
+#         gt_tmp = gt_tmp[0, :, :].astype(np.uint8)
+#         pred_tmp = pred_tmp[0, :, :].astype(np.uint8)
+
+#         gt_inst = cv2.connectedComponents(gt_tmp)[1]
+#         pred_inst = cv2.connectedComponents(pred_tmp)[1]
+
+#         # count objects and their area
+#         xedges, area_true = np.unique(gt_inst, return_counts=True)
+#         xedges = np.append(xedges, xedges[-1] + 1)
+#         yedges, area_pred = np.unique(pred_inst, return_counts=True)
+#         yedges = np.append(yedges, yedges[-1] + 1)
+
+#         # compute intersection
+#         h = np.histogram2d(
+#             gt_inst.flatten(), pred_inst.flatten(), bins=(xedges, yedges)
+#         )
+#         intersection = h[0]
+
+#         # compute union
+#         area_true = np.expand_dims(area_true, -1)
+#         area_pred = np.expand_dims(area_pred, 0)
+#         union = area_true + area_pred - intersection
+
+#         # exclude background from the analysis
+#         intersection = intersection[1:, 1:]
+#         union = union[1:, 1:]
+
+#         # compute intersection over union
+#         union[union == 0] = 1e-9
+#         IOU.append(intersection / union)
+
+#     return IOU
+
+
+# def measures_f1(t_min, t_max, IOUs):
+#     """
+#     Compute f1 score for given IoU and threshold. Derived from:
+#     Caicedo_Carpenter (2019). Evaluation of deep learning strategies for nucleus segmentation in Fluorescence Images
+
+#     Parameter
+#     ---------
+
+#     t_min: float
+#         Float indicating IoU threshold at which segmentation errors objects are detected.
+
+#     t_max: float
+#         Float indicating IoU threshold at which predicted and ground truth segmentation overlap is a match.
+
+#     IOU: list of np.array of float
+#         List containing arrays of shape (#true_objects, #pred_objects) representing IoU for each sample in batch.
+
+
+#     Return
+#     ------
+
+#     Returns (float, int, int, int) representing f1-score, TP, FP, and FN
+#     """
+#     f1 = []
+#     tp = []
+#     fp = []
+#     fn = []
+#     splits = []
+#     merges = []
+#     inaccurate_masks = []
+
+#     for i, IOU in enumerate(IOUs):
+#         # determine detected objects based on threshold
+#         matches_max = IOU > t_max
+#         matches_min = IOU > t_min
+#         matches_diff = np.logical_xor(matches_min, matches_max)
+
+#         # count TP, FN, FP
+#         true_positives = np.sum(matches_max, axis=1) == 1  # Correct objects
+#         false_positives = np.sum(matches_min, axis=0) == 0  # Extra objects
+#         false_negatives = np.sum(matches_min, axis=1) == 0  # Missed objects
+
+#         assert np.all(np.less_equal(true_positives, 1))
+#         assert np.all(np.less_equal(false_positives, 1))
+#         assert np.all(np.less_equal(false_negatives, 1))
+
+#         tp.append(np.sum(true_positives))
+#         fp.append(np.sum(false_positives))
+#         fn.append(np.sum(false_negatives))
+
+#         # compute f1-score
+#         f1.append(2 * tp[i] / (2 * tp[i] + fp[i] + fn[i] + 1e-9))
+
+#         # compute splits, merges
+#         gts, preds = np.where(matches_diff == 1)
+#         gt_ids, gt_counts = np.unique(gts, return_counts=True)
+#         pred_ids, pred_counts = np.unique(preds, return_counts=True)
+
+#         splits_tmp = sum(gt_counts > 1)
+#         merges_tmp = sum(pred_counts > 1)
+
+#         # compute inaccurate_masks
+#         ## remove splits from gts and preds
+#         if splits_tmp > 0:
+#             for gt_id in gt_ids[gt_counts > 1]:
+#                 bool_idx = gts != gt_id
+#                 gts = gts[bool_idx]
+#                 preds = preds[bool_idx]
+
+#         ## remove merges from gts and preds
+#         if merges_tmp > 0:
+#             for pred_id in pred_ids[pred_counts > 1]:
+#                 bool_idx = preds != pred_id
+#                 gts = gts[bool_idx]
+#                 preds = preds[bool_idx]
+
+#         inaccurate_masks_tmp = len(gts)
+
+#         splits.append(splits_tmp)
+#         merges.append(merges_tmp)
+#         inaccurate_masks.append(inaccurate_masks_tmp)
+
+#     scores = {
+#         "f1": f1,
+#         "tp": tp,
+#         "fp": fp,
+#         "fn": fn,
+#         "splits": splits,
+#         "merges": merges,
+#         "inaccurate_masks": inaccurate_masks,
+#     }
+
+#     return scores

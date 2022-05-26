@@ -1,0 +1,75 @@
+Metadata-Version: 2.1
+Name: cell-segmentation
+Version: 0.1.dev6+g249468f
+Summary: segments cells in transmitted light images
+Home-page: https://github.com/dsethz/cell_segmentation
+Author: Melinda Kondorosy and Daniel Schirmacher
+Author-email: daniel.schirmacher@bsse.ethz.ch
+License: BSD-3
+Project-URL: Bug Tracker, https://github.com/dsethz/cell_segmentation/issues
+Project-URL: Documentation, 'https://github.com/dsethz/cell_segmentation#README.md'
+Project-URL: Source Code, https://github.com/dsethz/cell_segmentation
+Project-URL: User Support, https://github.com/dsethz/cell_segmentation/issues
+Description: # cell_segmentation
+        This repository contains a pipeline to segment cell bodies.
+        
+        ## Installation
+        1) clone the repository (consider `ssh` alternative)
+        
+            ```bash
+            git clone https://github.com/dsethz/cell_segmentation.git
+            ```
+        
+        2) Navigate to the cloned directory
+        
+            ```bash
+            cd cell_segmentation
+            ```
+        
+        3) We recommend using a virtual environment. If you are using anaconda, you can use the following.
+        
+            ```bash
+            conda create -n cellseg python=3.8
+            ```
+        
+        4) Activate your virtual environment, after it has been created.
+        
+            ```bash
+            conda activate cellseg
+            ```
+        
+        5) Install `cell_segmentation`.
+        
+            1) as a user
+        
+                ```bash
+                pip install .
+                ```
+            2) as a developer (in editable mode with development dependencies and pre-commit hooks)
+         
+                ```bash
+                pip install -e ".[dev]"
+                pre-commit install
+                ```
+        
+        6) [Install `torch`](https://pytorch.org/get-started/locally/) compatible with your system. cell_segmentation was
+        tested with `torch` version `1.10.2` and `cuda` version `11.3.1`.
+        
+        7) [Install `pytorch-lightning`](https://www.pytorchlightning.ai) compatible with your system. cell_segmentation
+        was tested with version `1.5.9`.
+        
+        
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Testing
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: BSD License
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Provides-Extra: dev
