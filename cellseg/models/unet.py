@@ -325,6 +325,7 @@ class LitUnet(pl.LightningModule):
         self,
         bilinear: bool = True,
         base_filters: int = 32,
+        criterion: str = "loss",
         receptive_field: int = 128,
         learning_rate: float = 1e-3,
         **kwargs,
@@ -334,11 +335,14 @@ class LitUnet(pl.LightningModule):
 
         Parameters
         ----------
-        bilinear : If true use bilinear othterwise ConvTranspose
+        bilinear : bool
+            If true use bilinear othterwise ConvTranspose.
         base_filters : int
-                        The default is 32. Number of conv. filters
-        receptive_field : int (must be power of 2)
-                        The default is 128.
+            The default is 32. Number of conv. filters.
+        criterion : str
+            Accepts either 'loss' or 'f1'.
+        receptive_field : int
+            The default is 128. Must be power of 2.
         learning_rate : float, optional
             The default is 1e-3.
 
@@ -360,6 +364,10 @@ class LitUnet(pl.LightningModule):
             bilinear, bool
         ), f'bilinear is expected to be of type "bool" but is of type "{type(bilinear)}".'
         assert isinstance(
+            criterion, str
+        ), f'criterion is expected to be of type "str", but is of type "{type(criterion)}".'
+        assert criterion in ["loss", "f1"], 'criterion must be either "loss" or "f1".'
+        assert isinstance(
             receptive_field, int
         ), f'receptive_field is expected to be of type "int" but is of type "{type(receptive_field)}".'
         assert (
@@ -371,6 +379,7 @@ class LitUnet(pl.LightningModule):
 
         self.bilinear = bilinear
         self.base_filters = base_filters
+        self.criterion = criterion
         self.model_class = "unet"
         self.max_filters = 512
         self.receptive_field = receptive_field
@@ -412,9 +421,12 @@ class LitUnet(pl.LightningModule):
         loss_val = F.binary_cross_entropy(masks_hat, masks)
         self.log("loss_val", loss_val, on_step=True, on_epoch=True, sync_dist=True)
 
+        # TODO: include option to use f1
+
         return loss_val
 
     def test_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
+        # TODO: include f1 computation
         imgs, masks, ids = batch
         masks_hat = self(imgs)
 

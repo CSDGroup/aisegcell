@@ -44,7 +44,14 @@ def train():
         "--model",
         type=str,
         default="Unet",
-        help="Model type to train. Default ist Unet",
+        help="Model type to train. Default is Unet",
+    )
+
+    parser.add_argument(
+        "--criterion",
+        type=str,
+        default="loss",
+        help="Criterion to select best model during training. Can be either 'loss' or 'f1'. Default is 'loss'.",
     )
 
     parser.add_argument(
@@ -130,6 +137,7 @@ def train():
     data = args.data
     data_val = args.data_val
     model = args.model
+    criterion = args.criterion
     devices = args.devices
     output_base_dir = args.output_base_dir
     epochs = args.epochs
@@ -212,6 +220,7 @@ def train():
         model = LitUnet(
             base_filters=base_filters,
             bilinear=bilinear,
+            criterion=criterion,
             receptive_field=receptive_field,
             learning_rate=lr,
         )
@@ -219,11 +228,21 @@ def train():
         raise ValueError(f'model type "{model}" is not implemented.')
 
     # set up callback for best model
-    checkpoint_best = ModelCheckpoint(
-        monitor="loss_val",
-        filename="best-{epoch}-{step}",
-        mode="min",
-    )
+    if criterion == "loss":
+        checkpoint_best = ModelCheckpoint(
+            monitor="loss_val",
+            filename="best-loss-{epoch}-{step}",
+            mode="min",
+        )
+    elif criterion == "f1":
+        checkpoint_best = ModelCheckpoint(
+            monitor="f1",
+            filename="best-f1-{epoch}-{step}",
+            mode="max",
+        )
+    else:
+        raise ValueError(f'"{criterion}" is not valid as "criterion".')
+
     # callback for latest model
     checkpoint_latest = ModelCheckpoint(
         monitor=None,
@@ -342,9 +361,3 @@ def test():
 def predict():
     trainer, model, data_module = initialise_inferrence()
     trainer.predict(model, data_module)
-
-
-if __name__ == "__main__":
-    train()
-    test()
-    predict()
