@@ -1,0 +1,20 @@
+repos:
+-   repo: https://github.com/pycqa/isort
+    rev: 5.8.0
+    hooks:
+    - id: isort
+      exclude: _vendor|vendored|examples
+      args: ["--profile", "black"]
+-   repo: https://github.com/python/black
+    rev: 22.3.0
+    hooks:
+    - id: black
+      pass_filenames: true
+      exclude: _vendor|vendored|examples
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+    - id: flake8
+      pass_filenames: true
+      # this seems to need to be here in addition to setup.cfg
+      exclude: _vendor|vendored|__init__.py|examples
