@@ -6,8 +6,6 @@
 # PyTorch Version:      1.7.1                                                                                         #
 # PyTorch Lightning Version: 1.5.9                                                                                    #
 #######################################################################################################################
-
-
 import math
 import os
 from typing import List
@@ -18,6 +16,7 @@ import torch.nn.functional as F
 from torch import nn
 
 from cellseg.utils.datamodule import save_image_mod
+from cellseg.utils.evaluation import compute_f1
 
 slope = 1e-2
 
@@ -334,11 +333,12 @@ class LitUnet(pl.LightningModule):
 
         Parameters
         ----------
-        bilinear : If true use bilinear othterwise ConvTranspose
+        bilinear : bool
+            If true use bilinear othterwise ConvTranspose.
         base_filters : int
-                        The default is 32. Number of conv. filters
-        receptive_field : int (must be power of 2)
-                        The default is 128.
+            The default is 32. Number of conv. filters.
+        receptive_field : int
+            The default is 128. Must be power of 2.
         learning_rate : float, optional
             The default is 1e-3.
 
@@ -371,6 +371,8 @@ class LitUnet(pl.LightningModule):
 
         self.bilinear = bilinear
         self.base_filters = base_filters
+        self.t_min = 0.1
+        self.t_max = 0.6
         self.model_class = "unet"
         self.max_filters = 512
         self.receptive_field = receptive_field
@@ -386,10 +388,14 @@ class LitUnet(pl.LightningModule):
 
     # save input variables which are not in the __init__function on checkpoints
     def on_save_checkpoint(self, checkpoint) -> None:
+        checkpoint["t_max"] = self.t_max
+        checkpoint["t_min"] = self.t_min
         checkpoint["model_class"] = self.model_class
         checkpoint["max_filters"] = self.max_filters
 
     def on_load_checkpoint(self, checkpoint) -> None:
+        self.t_max = checkpoint["t_max"]
+        self.t_min = checkpoint["t_min"]
         self.model_class = checkpoint["model_class"]
         self.max_filters = checkpoint["max_filters"]
 
@@ -412,14 +418,52 @@ class LitUnet(pl.LightningModule):
         loss_val = F.binary_cross_entropy(masks_hat, masks)
         self.log("loss_val", loss_val, on_step=True, on_epoch=True, sync_dist=True)
 
+        f1_scores = compute_f1(masks_hat, masks, self.t_min, self.t_max)
+        self.log(
+            "f1",
+            f1_scores["f1"].mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+        )
+
         return loss_val
 
     def test_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
         imgs, masks, ids = batch
         masks_hat = self(imgs)
 
+        # save loss
         loss_test = F.binary_cross_entropy(masks_hat, masks)
-        self.log("loss_test", loss_test, on_step=True, on_epoch=True, sync_dist=True)
+        self.log("loss_test", loss_test, on_step=True, on_epoch=True, sync_dist=False)
+
+        # save f1 and associated metrics
+        f1_scores = compute_f1(masks_hat, masks, self.t_min, self.t_max)
+        self.log("f1", f1_scores["f1"][0], on_step=True, on_epoch=True, sync_dist=False)
+        self.log("tp", f1_scores["tp"][0], on_step=True, on_epoch=True, sync_dist=False)
+        self.log("fp", f1_scores["fp"][0], on_step=True, on_epoch=True, sync_dist=False)
+        self.log("fn", f1_scores["fn"][0], on_step=True, on_epoch=True, sync_dist=False)
+        self.log(
+            "splits",
+            f1_scores["splits"][0],
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
+        self.log(
+            "merges",
+            f1_scores["merges"][0],
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
+        self.log(
+            "inaccurate_masks",
+            f1_scores["inaccurate_masks"][0],
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
 
         # binarise inferred masks for visualisation
         # (cells = 1, background = 0)

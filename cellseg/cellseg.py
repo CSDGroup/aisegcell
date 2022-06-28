@@ -44,7 +44,7 @@ def train():
         "--model",
         type=str,
         default="Unet",
-        help="Model type to train. Default ist Unet",
+        help="Model type to train. Default is Unet",
     )
 
     parser.add_argument(
@@ -219,11 +219,18 @@ def train():
         raise ValueError(f'model type "{model}" is not implemented.')
 
     # set up callback for best model
-    checkpoint_best = ModelCheckpoint(
+    checkpoint_best_loss = ModelCheckpoint(
         monitor="loss_val",
-        filename="best-{epoch}-{step}",
+        filename="best-loss-{epoch}-{step}",
         mode="min",
     )
+
+    checkpoint_best_f1 = ModelCheckpoint(
+        monitor="f1",
+        filename="best-f1-{epoch}-{step}",
+        mode="max",
+    )
+
     # callback for latest model
     checkpoint_latest = ModelCheckpoint(
         monitor=None,
@@ -243,7 +250,7 @@ def train():
         num_processes=num_processes,
         # deterministic=deterministic,
         logger=logger,
-        callbacks=[checkpoint_best, checkpoint_latest],
+        callbacks=[checkpoint_best_loss, checkpoint_best_f1, checkpoint_latest],
         sync_batchnorm=sync_batchnorm
         # num_nodes = nnodes, # NOTE: currently not supported
     )
@@ -342,9 +349,3 @@ def test():
 def predict():
     trainer, model, data_module = initialise_inferrence()
     trainer.predict(model, data_module)
-
-
-if __name__ == "__main__":
-    train()
-    test()
-    predict()
