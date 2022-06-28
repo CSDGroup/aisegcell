@@ -83,7 +83,7 @@ def iou(pred: torch.Tensor, gt: torch.Tensor) -> List[np.ndarray]:
 
 def iou_to_f1(
     t_min: float, t_max: float, IOUs: List[np.ndarray]
-) -> Dict[str, List[Any]]:
+) -> Dict[str, torch.Tensor]:
     """
     Compute f1 score for given IoU and threshold. Derived from:
     Caicedo_Carpenter (2019). Evaluation of deep learning strategies for nucleus segmentation in Fluorescence Images
@@ -134,9 +134,6 @@ def iou_to_f1(
         fp.append(np.sum(false_positives))
         fn.append(np.sum(false_negatives))
 
-        # compute f1-score
-        f1.append(2 * tp[i] / (2 * tp[i] + fp[i] + fn[i] + 1e-9))
-
         # compute splits, merges
         gts, preds = np.where(matches_diff == 1)
         gt_ids, gt_counts = np.unique(gts, return_counts=True)
@@ -165,6 +162,9 @@ def iou_to_f1(
         splits.append(splits_tmp)
         merges.append(merges_tmp)
         inaccurate_masks.append(inaccurate_masks_tmp)
+
+        # compute f1-score
+        f1.append(2 * tp[i] / (2 * tp[i] + fp[i] + fn[i] + inaccurate_masks[i] + 1e-9))
 
     scores = {
         "f1": torch.FloatTensor(f1),
