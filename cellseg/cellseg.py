@@ -48,13 +48,6 @@ def train():
     )
 
     parser.add_argument(
-        "--criterion",
-        type=str,
-        default="loss",
-        help="Criterion to select best model during training. Can be either 'loss' or 'f1'. Default is 'loss'.",
-    )
-
-    parser.add_argument(
         "--devices",
         type=str,
         nargs="+",
@@ -137,7 +130,6 @@ def train():
     data = args.data
     data_val = args.data_val
     model = args.model
-    criterion = args.criterion
     devices = args.devices
     output_base_dir = args.output_base_dir
     epochs = args.epochs
@@ -220,7 +212,6 @@ def train():
         model = LitUnet(
             base_filters=base_filters,
             bilinear=bilinear,
-            criterion=criterion,
             receptive_field=receptive_field,
             learning_rate=lr,
         )
@@ -228,20 +219,17 @@ def train():
         raise ValueError(f'model type "{model}" is not implemented.')
 
     # set up callback for best model
-    if criterion == "loss":
-        checkpoint_best = ModelCheckpoint(
-            monitor="loss_val",
-            filename="best-loss-{epoch}-{step}",
-            mode="min",
-        )
-    elif criterion == "f1":
-        checkpoint_best = ModelCheckpoint(
-            monitor="f1",
-            filename="best-f1-{epoch}-{step}",
-            mode="max",
-        )
-    else:
-        raise ValueError(f'"{criterion}" is not valid as "criterion".')
+    checkpoint_best_loss = ModelCheckpoint(
+        monitor="loss_val",
+        filename="best-loss-{epoch}-{step}",
+        mode="min",
+    )
+
+    checkpoint_best_f1 = ModelCheckpoint(
+        monitor="f1",
+        filename="best-f1-{epoch}-{step}",
+        mode="max",
+    )
 
     # callback for latest model
     checkpoint_latest = ModelCheckpoint(
@@ -262,7 +250,7 @@ def train():
         num_processes=num_processes,
         # deterministic=deterministic,
         logger=logger,
-        callbacks=[checkpoint_best, checkpoint_latest],
+        callbacks=[checkpoint_best_loss, checkpoint_best_f1, checkpoint_latest],
         sync_batchnorm=sync_batchnorm
         # num_nodes = nnodes, # NOTE: currently not supported
     )

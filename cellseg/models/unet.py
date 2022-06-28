@@ -324,7 +324,6 @@ class LitUnet(pl.LightningModule):
         self,
         bilinear: bool = True,
         base_filters: int = 32,
-        criterion: str = "loss",
         receptive_field: int = 128,
         learning_rate: float = 1e-3,
         **kwargs,
@@ -338,8 +337,6 @@ class LitUnet(pl.LightningModule):
             If true use bilinear othterwise ConvTranspose.
         base_filters : int
             The default is 32. Number of conv. filters.
-        criterion : str
-            Accepts either 'loss' or 'f1'.
         receptive_field : int
             The default is 128. Must be power of 2.
         learning_rate : float, optional
@@ -363,10 +360,6 @@ class LitUnet(pl.LightningModule):
             bilinear, bool
         ), f'bilinear is expected to be of type "bool" but is of type "{type(bilinear)}".'
         assert isinstance(
-            criterion, str
-        ), f'criterion is expected to be of type "str", but is of type "{type(criterion)}".'
-        assert criterion in ["loss", "f1"], 'criterion must be either "loss" or "f1".'
-        assert isinstance(
             receptive_field, int
         ), f'receptive_field is expected to be of type "int" but is of type "{type(receptive_field)}".'
         assert (
@@ -378,7 +371,6 @@ class LitUnet(pl.LightningModule):
 
         self.bilinear = bilinear
         self.base_filters = base_filters
-        self.criterion = criterion
         self.t_min = 0.1
         self.t_max = 0.6
         self.model_class = "unet"
@@ -426,15 +418,14 @@ class LitUnet(pl.LightningModule):
         loss_val = F.binary_cross_entropy(masks_hat, masks)
         self.log("loss_val", loss_val, on_step=True, on_epoch=True, sync_dist=True)
 
-        if self.criterion == "f1":
-            f1_scores = compute_f1(masks_hat, masks, self.t_min, self.t_max)
-            self.log(
-                "f1",
-                f1_scores["f1"].mean(),
-                on_step=True,
-                on_epoch=True,
-                sync_dist=True,
-            )
+        f1_scores = compute_f1(masks_hat, masks, self.t_min, self.t_max)
+        self.log(
+            "f1",
+            f1_scores["f1"].mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+        )
 
         return loss_val
 
