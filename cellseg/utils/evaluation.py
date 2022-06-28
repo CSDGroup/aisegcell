@@ -7,9 +7,9 @@
 #######################################################################################################################
 from typing import Any, Dict, List
 
-import cv2
 import numpy as np
 import torch
+from skimage.measure import label
 
 
 def iou(pred: torch.Tensor, gt: torch.Tensor) -> List[np.ndarray]:
@@ -50,8 +50,9 @@ def iou(pred: torch.Tensor, gt: torch.Tensor) -> List[np.ndarray]:
         gt_tmp = gt_tmp[0, :, :].astype(np.uint8)
         pred_tmp = pred_tmp[0, :, :].astype(np.uint8)
 
-        gt_inst = cv2.connectedComponents(gt_tmp)[1]
-        pred_inst = cv2.connectedComponents(pred_tmp)[1]
+        # convert semantic to instance segmentation
+        gt_inst = label(gt_tmp)
+        pred_inst = label(pred_tmp)
 
         # count objects and their area
         xedges, area_true = np.unique(gt_inst, return_counts=True)
