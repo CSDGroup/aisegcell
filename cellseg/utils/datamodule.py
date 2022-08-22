@@ -143,7 +143,8 @@ class Dataset:
 
         # merge image and masks for padding and transformations
         # to apply the same random augmentations to images and masks
-        merged = torch.zeros(2, image_trans.size()[1], image_trans.size()[2])
+        _, height, width = image_trans.size()
+        merged = torch.zeros(2, height, width)
         merged[0, :, :] = image_trans
         merged[1, :, :] = mask_trans
 
@@ -186,6 +187,10 @@ class Dataset:
         mask_path = self.data.iloc[idx, 1]
         mask = io.imread(mask_path)
         # mask in format (height, width) or (depth, height, width)
+
+        # assert all masks are semantic segmentation in 8bit format
+        mask[mask > 0] = 255
+        mask = mask.astype(np.uint8)
 
         # preprocess image and mask
         image, mask = self._preprocess(image, mask)
@@ -358,6 +363,10 @@ class Dataset_test:
         mask_path = self.data.iloc[idx, 1]
         mask = io.imread(mask_path)
         # mask in format (height, width) or (depth, height, width)
+
+        # assert all masks are semantic segmentation in 8bit format
+        mask[mask > 0] = 255
+        mask = mask.astype(np.uint8)
 
         # preprocess image and mask
         image, mask = self._preprocess(image, mask)
