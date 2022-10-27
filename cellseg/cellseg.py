@@ -228,7 +228,7 @@ def train():
             raise ValueError(f'model type "{model}" is not implemented.')
     else:
         if os.path.isfile(checkpoint):
-            model = LitUnet.load_from_checkpoint(model)
+            model = LitUnet.load_from_checkpoint(checkpoint)
         else:
             raise FileNotFoundError(f'The file "{checkpoint}" does not exist.')
 
