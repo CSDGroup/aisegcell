@@ -48,6 +48,13 @@ def train():
     )
 
     parser.add_argument(
+        "--checkpoint",
+        type=str,
+        default=None,
+        help="(Optional) Path to checkpoint file of trained pl.LightningModule.",
+    )
+
+    parser.add_argument(
         "--devices",
         type=str,
         nargs="+",
@@ -130,6 +137,7 @@ def train():
     data = args.data
     data_val = args.data_val
     model = args.model
+    checkpoint = args.checkpoint
     devices = args.devices
     output_base_dir = args.output_base_dir
     epochs = args.epochs
@@ -208,15 +216,21 @@ def train():
     #     deterministic = False
 
     # load model
-    if model == "Unet":
-        model = LitUnet(
-            base_filters=base_filters,
-            bilinear=bilinear,
-            receptive_field=receptive_field,
-            learning_rate=lr,
-        )
+    if checkpoint is None:
+        if model == "Unet":
+            model = LitUnet(
+                base_filters=base_filters,
+                bilinear=bilinear,
+                receptive_field=receptive_field,
+                learning_rate=lr,
+            )
+        else:
+            raise ValueError(f'model type "{model}" is not implemented.')
     else:
-        raise ValueError(f'model type "{model}" is not implemented.')
+        if os.path.isfile(checkpoint):
+            model = LitUnet.load_from_checkpoint(model)
+        else:
+            raise FileNotFoundError(f'The file "{checkpoint}" does not exist.')
 
     # set up callback for best model
     checkpoint_best_loss = ModelCheckpoint(

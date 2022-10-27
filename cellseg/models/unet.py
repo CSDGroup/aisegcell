@@ -386,8 +386,8 @@ class LitUnet(pl.LightningModule):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.unet(x)
 
-    # save input variables which are not in the __init__function on checkpoints
     def on_save_checkpoint(self, checkpoint) -> None:
+        # save input variables which are not in the __init__function on checkpoints
         checkpoint["t_max"] = self.t_max
         checkpoint["t_min"] = self.t_min
         checkpoint["model_class"] = self.model_class
