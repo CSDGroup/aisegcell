@@ -9,6 +9,7 @@
 import argparse
 import os
 import random
+import re
 from datetime import date
 
 import pytorch_lightning as pl
@@ -45,6 +46,13 @@ def train():
         type=str,
         default="Unet",
         help="Model type to train. Default is Unet",
+    )
+
+    parser.add_argument(
+        "--checkpoint",
+        type=str,
+        default=None,
+        help="(Optional) Path to checkpoint file of trained pl.LightningModule.",
     )
 
     parser.add_argument(
@@ -130,6 +138,7 @@ def train():
     data = args.data
     data_val = args.data_val
     model = args.model
+    checkpoint = args.checkpoint
     devices = args.devices
     output_base_dir = args.output_base_dir
     epochs = args.epochs
@@ -217,6 +226,12 @@ def train():
         )
     else:
         raise ValueError(f'model type "{model}" is not implemented.')
+    # if checkpoint is None:
+    # else:
+    #     if os.path.isfile(checkpoint):
+    #         model = LitUnet.load_from_checkpoint(checkpoint)
+    #     else:
+    #         raise FileNotFoundError(f'The file "{checkpoint}" does not exist.')
 
     # set up callback for best model
     checkpoint_best_loss = ModelCheckpoint(
@@ -239,6 +254,12 @@ def train():
         save_top_k=1,
     )
 
+    # update max_epoch when loading from checkpoint
+    if checkpoint is not None:
+        epoch_pattern = re.compile(r"epoch=([0-9]+)")
+        old_epoch = int(epoch_pattern.search(checkpoint)[1])
+        epochs += old_epoch
+
     # train model
     logger = CSVLogger(output_base_dir, name="lightning_logs")
     trainer = pl.Trainer(
@@ -254,7 +275,7 @@ def train():
         sync_batchnorm=sync_batchnorm
         # num_nodes = nnodes, # NOTE: currently not supported
     )
-    trainer.fit(model, data_module)
+    trainer.fit(model, data_module, ckpt_path=checkpoint)
 
 
 def initialise_inferrence():
