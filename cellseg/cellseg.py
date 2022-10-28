@@ -9,6 +9,7 @@
 import argparse
 import os
 import random
+import re
 from datetime import date
 
 import pytorch_lightning as pl
@@ -216,21 +217,21 @@ def train():
     #     deterministic = False
 
     # load model
-    if checkpoint is None:
-        if model == "Unet":
-            model = LitUnet(
-                base_filters=base_filters,
-                bilinear=bilinear,
-                receptive_field=receptive_field,
-                learning_rate=lr,
-            )
-        else:
-            raise ValueError(f'model type "{model}" is not implemented.')
+    if model == "Unet":
+        model = LitUnet(
+            base_filters=base_filters,
+            bilinear=bilinear,
+            receptive_field=receptive_field,
+            learning_rate=lr,
+        )
     else:
-        if os.path.isfile(checkpoint):
-            model = LitUnet.load_from_checkpoint(checkpoint)
-        else:
-            raise FileNotFoundError(f'The file "{checkpoint}" does not exist.')
+        raise ValueError(f'model type "{model}" is not implemented.')
+    # if checkpoint is None:
+    # else:
+    #     if os.path.isfile(checkpoint):
+    #         model = LitUnet.load_from_checkpoint(checkpoint)
+    #     else:
+    #         raise FileNotFoundError(f'The file "{checkpoint}" does not exist.')
 
     # set up callback for best model
     checkpoint_best_loss = ModelCheckpoint(
@@ -253,6 +254,12 @@ def train():
         save_top_k=1,
     )
 
+    # update max_epoch when loading from checkpoint
+    if checkpoint is not None:
+        epoch_pattern = re.compile(r"epoch=([0-9]+)")
+        old_epoch = int(epoch_pattern.search(checkpoint)[1])
+        epochs += old_epoch
+
     # train model
     logger = CSVLogger(output_base_dir, name="lightning_logs")
     trainer = pl.Trainer(
@@ -268,7 +275,7 @@ def train():
         sync_batchnorm=sync_batchnorm
         # num_nodes = nnodes, # NOTE: currently not supported
     )
-    trainer.fit(model, data_module)
+    trainer.fit(model, data_module, ckpt_path=checkpoint)
 
 
 def initialise_inferrence():
