@@ -4,7 +4,7 @@
 #                       Cell Systems Dynamics Group, D-BSSE, ETH Zurich                                              #
 # Python Version:       3.8.6                                                                                        #
 # PyTorch Version:      1.7.1                                                                                        #
-# PyTorch Lightning Version: 1.5.9                                                                                    #
+# PyTorch Lightning Version: 1.5.9                                                                                   #
 ######################################################################################################################
 import argparse
 import os

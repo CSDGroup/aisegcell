@@ -40,8 +40,8 @@ This repository contains a pipeline to segment cell bodies.
         pre-commit install
         ```
 
-6) [Install `torch`](https://pytorch.org/get-started/locally/) compatible with your system. cell_segmentation was
-tested with `torch` version `1.10.2` and `cuda` version `11.3.1`.
+6) [Install `torch`/`torchvision`](https://pytorch.org/get-started/locally/) compatible with your system. cell_segmentation was
+tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version `11.3.1`.
 
 7) [Install `pytorch-lightning`](https://www.pytorchlightning.ai) compatible with your system. cell_segmentation
 was tested with version `1.5.9`.
