@@ -34,9 +34,7 @@ class CheckpointCallback(Callback):
 
         # update best_model_score if we are retraining
         if any(cb_ids):
-            print("checkpoint")
             if self.retrain:
-                print("retrain")
                 for i in cb_ids:
                     # we assume the user has tested pretrained model and it is not sufficient
                     # --> we do not require a baseline for the untrained model
@@ -50,8 +48,3 @@ class CheckpointCallback(Callback):
                         trainer.callbacks[i].best_k_models[
                             trainer.callbacks[i].best_model_path
                         ] = torch.tensor(10.0)
-            else:
-                print("no retrain")
-
-        else:
-            print("no checkpoint")
