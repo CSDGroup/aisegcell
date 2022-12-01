@@ -128,6 +128,12 @@ def train():
     )
 
     parser.add_argument(
+        "--retrain",
+        action="store_true",
+        help="If flag is used, best scores for model saving will be reset (required for training on new data).",
+    )
+
+    parser.add_argument(
         "--seed",
         type=int,
         default=None,
@@ -151,6 +157,7 @@ def train():
 
     bilinear = args.bilinear
     multiprocessing = args.multiprocessing
+    retrain = args.retrain
     seed = args.seed
 
     # create directories
@@ -276,7 +283,7 @@ def train():
             checkpoint_best_loss,
             checkpoint_best_f1,
             checkpoint_latest,
-            CheckpointCallback(),
+            CheckpointCallback(retrain=retrain),
         ],
         sync_batchnorm=sync_batchnorm
         # num_nodes = nnodes, # NOTE: currently not supported
