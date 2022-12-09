@@ -18,6 +18,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import CSVLogger
 
 from cellseg.models.unet import LitUnet
+from cellseg.utils.callbacks import CheckpointCallback
 from cellseg.utils.datamodule import DataModule
 
 
@@ -128,6 +129,12 @@ def train():
     )
 
     parser.add_argument(
+        "--retrain",
+        action="store_true",
+        help="If flag is used, best scores for model saving will be reset (required for training on new data).",
+    )
+
+    parser.add_argument(
         "--seed",
         type=int,
         default=None,
@@ -151,6 +158,7 @@ def train():
 
     bilinear = args.bilinear
     multiprocessing = args.multiprocessing
+    retrain = args.retrain
     seed = args.seed
 
     # create directories
@@ -272,7 +280,12 @@ def train():
         num_processes=num_processes,
         # deterministic=deterministic,
         logger=logger,
-        callbacks=[checkpoint_best_loss, checkpoint_best_f1, checkpoint_latest],
+        callbacks=[
+            checkpoint_best_loss,
+            checkpoint_best_f1,
+            checkpoint_latest,
+            CheckpointCallback(retrain=retrain),
+        ],
         sync_batchnorm=sync_batchnorm
         # num_nodes = nnodes, # NOTE: currently not supported
     )
