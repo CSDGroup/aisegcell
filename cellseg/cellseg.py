@@ -11,6 +11,7 @@ import os
 import random
 import re
 from datetime import date
+from typing import List, Tuple
 
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -291,10 +292,9 @@ def train():
     trainer.fit(model, data_module, ckpt_path=checkpoint)
 
 
-def initialise_inferrence():
+def _args_inference():
     """
-    Main function to test the trained Unet model. Load model from desired checkpoint.
-    Used for testing and predicting.
+    Receive user input for inference.
 
     """
     # get user input
@@ -327,13 +327,15 @@ def initialise_inferrence():
         help='Devices to use for model training. Can be GPU IDs as in default or "cpu".',
     )
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    data = args.data
-    model = args.model
-    devices = args.devices
-    output_base_dir = args.output_base_dir
 
+def _initialise_inferrence(
+    data: str, model: str, devices: List[str], output_base_dir: str
+) -> Tuple[pl.Trainer, pl.LightningModule, pl.LightningDataModule]:
+    """
+    Construct trainer, model, and data module for testing/predicting
+    """
     os.makedirs(output_base_dir, exist_ok=True)
 
     # ensure compatibility of devices with $CUDA_VISIBLE_DEVICES input
@@ -375,11 +377,49 @@ def initialise_inferrence():
     return trainer, model, data_module
 
 
-def test():
-    trainer, model, data_module = initialise_inferrence()
+def test(data: str, model: str, devices: List[str], output_base_dir: str) -> None:
+    """
+    Run model testing.
+    """
+    trainer, model, data_module = _initialise_inferrence(
+        data=data, model=model, devices=devices, output_base_dir=output_base_dir
+    )
     trainer.test(model, data_module)
 
 
-def predict():
-    trainer, model, data_module = initialise_inferrence()
+def predict(data: str, model: str, devices: List[str], output_base_dir: str) -> None:
+    """
+    Run model prediction.
+    """
+    trainer, model, data_module = _initialise_inferrence(
+        data=data, model=model, devices=devices, output_base_dir=output_base_dir
+    )
     trainer.predict(model, data_module)
+
+
+def test_cli():
+    """
+    CLI wrapper for test().
+    """
+    args = _args_inference()
+
+    data = args.data
+    model = args.model
+    devices = args.devices
+    output_base_dir = args.output_base_dir
+
+    test(data=data, model=model, devices=devices, output_base_dir=output_base_dir)
+
+
+def predict_cli():
+    """
+    CLI wrapper for predict().
+    """
+    args = _args_inference()
+
+    data = args.data
+    model = args.model
+    devices = args.devices
+    output_base_dir = args.output_base_dir
+
+    predict(data=data, model=model, devices=devices, output_base_dir=output_base_dir)
