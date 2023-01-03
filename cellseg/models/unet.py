@@ -17,6 +17,7 @@ from torch import nn
 
 from cellseg.utils.datamodule import save_image_mod
 from cellseg.utils.evaluation import compute_f1
+from cellseg.utils.evaluation import compute_iou
 
 slope = 1e-2
 
@@ -326,6 +327,7 @@ class LitUnet(pl.LightningModule):
         base_filters: int = 32,
         receptive_field: int = 128,
         learning_rate: float = 1e-3,
+        loss_weight: float = 1.0,
         **kwargs,
     ):
         """
@@ -368,6 +370,9 @@ class LitUnet(pl.LightningModule):
         assert isinstance(
             learning_rate, float
         ), f'learning_rate is expected to be of type "float" but is of type "{type(learning_rate)}".'
+        assert isinstance(
+            loss_weight, float
+        ), f'loss_weight is expected to be of type "float" but is of type "{type(loss_weight)}".'
 
         self.bilinear = bilinear
         self.base_filters = base_filters
@@ -377,6 +382,7 @@ class LitUnet(pl.LightningModule):
         self.max_filters = 512
         self.receptive_field = receptive_field
         self.lr = learning_rate
+        self.loss_weight = loss_weight
         self.unet = UNet_rec(
             bilinear=self.bilinear,
             base_filters=self.base_filters,
@@ -402,8 +408,9 @@ class LitUnet(pl.LightningModule):
     def training_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
         imgs, masks, ids = batch
         masks_hat = self(imgs)
+        weight = (self.loss_weight-1)*masks+1
 
-        loss = F.binary_cross_entropy(masks_hat, masks)
+        loss = F.binary_cross_entropy(masks_hat, masks, weight=weight)
         self.log("loss", loss, on_step=True, on_epoch=True, sync_dist=True)
 
         return {"loss": loss, "masks_hat": masks_hat, "masks": masks}
@@ -414,8 +421,9 @@ class LitUnet(pl.LightningModule):
 
         imgs, masks, ids = batch
         masks_hat = self(imgs)
+        weight = (self.loss_weight-1)*masks+1
 
-        loss_val = F.binary_cross_entropy(masks_hat, masks)
+        loss_val = F.binary_cross_entropy(masks_hat, masks, weight=weight)
         self.log("loss_val", loss_val, on_step=True, on_epoch=True, sync_dist=True)
 
         f1_scores = compute_f1(masks_hat, masks, self.t_min, self.t_max)
@@ -427,14 +435,44 @@ class LitUnet(pl.LightningModule):
             sync_dist=True,
         )
 
+        iou_all = compute_iou(masks_hat, masks)
+        iou = iou_all['iou']
+        iou_big = iou_all['iou_big']
+        iou_small = iou_all['iou_small']
+        
+        self.log(
+            "iou",
+            iou.mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+        )   
+        
+        self.log(
+            "iou_big",
+            iou_big.mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+        ) 
+        
+        self.log(
+            "iou_small",
+            iou_small.mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+        )
+
         return loss_val
 
     def test_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
         imgs, masks, ids = batch
         masks_hat = self(imgs)
+        weight = (self.loss_weight-1)*masks+1
 
         # save loss
-        loss_test = F.binary_cross_entropy(masks_hat, masks)
+        loss_test = F.binary_cross_entropy(masks_hat, masks, weight=weight)
         self.log("loss_test", loss_test, on_step=True, on_epoch=True, sync_dist=False)
 
         # save f1 and associated metrics
@@ -463,6 +501,35 @@ class LitUnet(pl.LightningModule):
             on_step=True,
             on_epoch=True,
             sync_dist=False,
+        )
+
+        iou_all = compute_iou(masks_hat, masks)
+        iou = iou_all['iou']
+        iou_big = iou_all['iou_big']
+        iou_small = iou_all['iou_small']
+        
+        self.log(
+            "iou",
+            iou.mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+        )   
+        
+        self.log(
+            "iou_big",
+            iou_big.mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
+        ) 
+        
+        self.log(
+            "iou_small",
+            iou_small.mean(),
+            on_step=True,
+            on_epoch=True,
+            sync_dist=True,
         )
 
         # binarise inferred masks for visualisation

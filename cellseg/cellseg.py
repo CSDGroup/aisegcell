@@ -141,6 +141,13 @@ def train():
         help="None or Int to use for random seeding.",
     )
 
+    parser.add_argument(
+        "--loss_weight",
+        type=float,
+        default=1.0,
+        help="How much more should the positive class weigh compared to the zero class for the binary cross entropy loss",
+    )
+
     args = parser.parse_args()
 
     data = args.data
@@ -160,6 +167,7 @@ def train():
     multiprocessing = args.multiprocessing
     retrain = args.retrain
     seed = args.seed
+    loss_weight = args.loss_weight
 
     # create directories
     d = date.today()
@@ -232,6 +240,7 @@ def train():
             bilinear=bilinear,
             receptive_field=receptive_field,
             learning_rate=lr,
+            loss_weight=loss_weight,
         )
     else:
         raise ValueError(f'model type "{model}" is not implemented.')
@@ -252,6 +261,12 @@ def train():
     checkpoint_best_f1 = ModelCheckpoint(
         monitor="f1",
         filename="best-f1-{epoch}-{step}",
+        mode="max",
+    )
+
+    checkpoint_best_iou = ModelCheckpoint(
+        monitor="iou",
+        filename="best-iou-{epoch}-{step}",
         mode="max",
     )
 
@@ -283,10 +298,12 @@ def train():
         callbacks=[
             checkpoint_best_loss,
             checkpoint_best_f1,
+            checkpoint_best_iou,
             checkpoint_latest,
             CheckpointCallback(retrain=retrain),
         ],
-        sync_batchnorm=sync_batchnorm
+        sync_batchnorm=sync_batchnorm,
+        log_every_n_steps=5
         # num_nodes = nnodes, # NOTE: currently not supported
     )
     trainer.fit(model, data_module, ckpt_path=checkpoint)
