@@ -16,8 +16,7 @@ import torch.nn.functional as F
 from torch import nn
 
 from cellseg.utils.datamodule import save_image_mod
-from cellseg.utils.evaluation import compute_f1
-from cellseg.utils.evaluation import compute_iou
+from cellseg.utils.evaluation import compute_f1, compute_iou
 
 slope = 1e-2
 
@@ -408,7 +407,7 @@ class LitUnet(pl.LightningModule):
     def training_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
         imgs, masks, ids = batch
         masks_hat = self(imgs)
-        weight = (self.loss_weight-1)*masks+1
+        weight = (self.loss_weight - 1) * masks + 1
 
         loss = F.binary_cross_entropy(masks_hat, masks, weight=weight)
         self.log("loss", loss, on_step=True, on_epoch=True, sync_dist=True)
@@ -421,7 +420,7 @@ class LitUnet(pl.LightningModule):
 
         imgs, masks, ids = batch
         masks_hat = self(imgs)
-        weight = (self.loss_weight-1)*masks+1
+        weight = (self.loss_weight - 1) * masks + 1
 
         loss_val = F.binary_cross_entropy(masks_hat, masks, weight=weight)
         self.log("loss_val", loss_val, on_step=True, on_epoch=True, sync_dist=True)
@@ -435,27 +434,28 @@ class LitUnet(pl.LightningModule):
             sync_dist=True,
         )
 
+        # compute and log IOU
         iou_all = compute_iou(masks_hat, masks)
-        iou = iou_all['iou']
-        iou_big = iou_all['iou_big']
-        iou_small = iou_all['iou_small']
-        
+        iou = iou_all["iou"]
+        iou_big = iou_all["iou_big"]
+        iou_small = iou_all["iou_small"]
+
         self.log(
             "iou",
             iou.mean(),
             on_step=True,
             on_epoch=True,
             sync_dist=True,
-        )   
-        
+        )
+
         self.log(
             "iou_big",
             iou_big.mean(),
             on_step=True,
             on_epoch=True,
             sync_dist=True,
-        ) 
-        
+        )
+
         self.log(
             "iou_small",
             iou_small.mean(),
@@ -469,7 +469,7 @@ class LitUnet(pl.LightningModule):
     def test_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
         imgs, masks, ids = batch
         masks_hat = self(imgs)
-        weight = (self.loss_weight-1)*masks+1
+        weight = (self.loss_weight - 1) * masks + 1
 
         # save loss
         loss_test = F.binary_cross_entropy(masks_hat, masks, weight=weight)
@@ -504,26 +504,26 @@ class LitUnet(pl.LightningModule):
         )
 
         iou_all = compute_iou(masks_hat, masks)
-        iou = iou_all['iou']
-        iou_big = iou_all['iou_big']
-        iou_small = iou_all['iou_small']
-        
+        iou = iou_all["iou"]
+        iou_big = iou_all["iou_big"]
+        iou_small = iou_all["iou_small"]
+
         self.log(
             "iou",
             iou.mean(),
             on_step=True,
             on_epoch=True,
             sync_dist=True,
-        )   
-        
+        )
+
         self.log(
             "iou_big",
             iou_big.mean(),
             on_step=True,
             on_epoch=True,
             sync_dist=True,
-        ) 
-        
+        )
+
         self.log(
             "iou_small",
             iou_small.mean(),

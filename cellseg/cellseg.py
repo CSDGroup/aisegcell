@@ -116,6 +116,20 @@ def train():
     )
 
     parser.add_argument(
+        "--log_frequency",
+        type=int,
+        default=50,
+        help="Log performance metrics every N gradient steps during training. Default = 50.",
+    )
+
+    parser.add_argument(
+        "--loss_weight",
+        type=float,
+        default=1.0,
+        help="Weight of the foreground class compared to the background class for the binary cross entropy loss.",
+    )
+
+    parser.add_argument(
         "--bilinear",
         action="store_true",
         help="If flag is used, use bilinear upsampling, else transposed convolutions.",
@@ -135,17 +149,16 @@ def train():
     )
 
     parser.add_argument(
+        "--transform_intensity",
+        action="store_true",
+        help="If flag is used random intensity transformations will be applied to image.",
+    )
+
+    parser.add_argument(
         "--seed",
         type=int,
         default=None,
         help="None or Int to use for random seeding.",
-    )
-
-    parser.add_argument(
-        "--loss_weight",
-        type=float,
-        default=1.0,
-        help="How much more should the positive class weigh compared to the zero class for the binary cross entropy loss",
     )
 
     args = parser.parse_args()
@@ -162,10 +175,12 @@ def train():
     base_filters = args.base_filters
     shape = tuple(args.shape)
     receptive_field = args.receptive_field
+    log_frequency = args.log_frequency
 
     bilinear = args.bilinear
     multiprocessing = args.multiprocessing
     retrain = args.retrain
+    transform_intensity = args.transform_intensity
     seed = args.seed
     loss_weight = args.loss_weight
 
@@ -222,7 +237,11 @@ def train():
 
     # set up data
     data_module = DataModule(
-        path_data=data, path_data_val=data_val, batch_size=batch_size, shape=shape
+        path_data=data,
+        path_data_val=data_val,
+        batch_size=batch_size,
+        shape=shape,
+        transform_intensity=transform_intensity,
     )
 
     # random seeding
@@ -303,7 +322,7 @@ def train():
             CheckpointCallback(retrain=retrain),
         ],
         sync_batchnorm=sync_batchnorm,
-        log_every_n_steps=5
+        log_every_n_steps=log_frequency,
         # num_nodes = nnodes, # NOTE: currently not supported
     )
     trainer.fit(model, data_module, ckpt_path=checkpoint)

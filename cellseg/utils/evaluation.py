@@ -179,6 +179,7 @@ def iou_to_f1(
 
     return scores
 
+
 def remove_cells(original_image: np.array, labels_to_remove: List[int]) -> torch.Tensor:
     """
     Remove cells with certain labels from a instant segmentation mask.
@@ -207,6 +208,7 @@ def remove_cells(original_image: np.array, labels_to_remove: List[int]) -> torch
 
     return modified_cells
 
+
 def compute_iou(pred: torch.Tensor, gt: torch.Tensor) -> List[float]:
     """
     Compute IoU of ground truth cells with big and small cells equally weighted.
@@ -232,15 +234,15 @@ def compute_iou(pred: torch.Tensor, gt: torch.Tensor) -> List[float]:
 
     # loop through list of tensors
     for mask, mask_hat in zip(gt, pred):
-        
+
         mask = mask.cpu().numpy()
         mask_hat = mask_hat.cpu()
 
         # generate images
         masks_inst = label(mask, background=0)
-        small_cells = masks_inst.copy()
-        big_cells = masks_inst.copy()
         cell_labels, sizes = np.unique(masks_inst, return_counts=True)
+        cell_labels = cell_labels[1:]  # remove background
+        sizes = sizes[1:]
 
         # get big cell labels
         is_big = np.where(sizes > 2000)[0]
@@ -250,76 +252,50 @@ def compute_iou(pred: torch.Tensor, gt: torch.Tensor) -> List[float]:
         is_small = np.where(sizes <= 2000)[0]
         small_labels = cell_labels[is_small]
 
-        if len(big_labels) == 1: # if no big cells, only consider small ones
+        # calculate iou
+        small_cells = remove_cells(masks_inst, big_labels)
+        big_cells = remove_cells(masks_inst, small_labels)
+        small_big_tensor = torch.stack((small_cells, big_cells), 0)
+        mask_hat_tensor = torch.stack((mask_hat, mask_hat), 0)
+        ious = iou(
+            mask_hat_tensor, small_big_tensor
+        )  # columns=predictions, rows=ground truths
 
-            small_cells =  remove_cells(masks_inst, big_labels)
-            small_tensor = small_cells[None,:]
-            mask_hat_tensor = mask_hat[None,:]
-            ious = iou(mask_hat_tensor, small_tensor) # columns=predictions, rows=ground truths
-            small_iou = ious[0]
+        small_iou = ious[0]
+        big_iou = ious[1]
 
-            # take ious according to gt
-            small_iou = np.amax(small_iou, axis=1)
+        # take ious according to gt
+        small_iou = np.amax(small_iou, axis=1, initial=0)
+        big_iou = np.amax(big_iou, axis=1, initial=0)
 
-            # take avg
+        if len(big_labels) == 0 and len(small_labels) > 0:
             avg_IOU_small_cells = np.mean(small_iou)
             avg_IOU_big_cells = 0
-
-            # add to list
             avg_iou = avg_IOU_small_cells
-
-
-        elif len(small_labels) == 0: # if no small cells, only consider big ones
-
-            big_cells = remove_cells(masks_inst, small_labels)
-            big_tensor = big_cells[None,:]
-            mask_hat_tensor = mask_hat[None,:]
-            ious = iou(mask_hat_tensor, big_tensor) # columns=predictions, rows=ground truths
-            big_iou = ious[0]
-
-            # take ious according to gt
-            big_iou = np.amax(big_iou, axis=1)
-
-            # take avg
+        elif len(small_labels) == 0 and len(big_labels) > 0:
             avg_IOU_big_cells = np.mean(big_iou)
             avg_IOU_small_cells = 0
-
-            # add to list
             avg_iou = avg_IOU_big_cells
-
+        elif len(small_labels) == 0 and len(big_labels) == 0:
+            avg_IOU_big_cells = 0
+            avg_IOU_small_cells = 0
+            avg_iou = 0
         else:
-
-            # calculate iou
-            small_cells = remove_cells(masks_inst, big_labels)
-            big_cells = remove_cells(masks_inst, small_labels)
-            small_big_tensor = torch.stack((small_cells, big_cells), 0)
-            mask_hat_tensor = torch.stack((mask_hat, mask_hat), 0)
-            ious = iou(mask_hat_tensor, small_big_tensor) # columns=predictions, rows=ground truths
-            small_iou = ious[0]
-            big_iou = ious[1]
-
-            # take ious according to gt
-            small_iou = np.amax(small_iou, axis=1)
-            big_iou = np.amax(big_iou, axis=1)
-
-            # take avg
             avg_IOU_small_cells = np.mean(small_iou)
             avg_IOU_big_cells = np.mean(big_iou)
+            avg_iou = (avg_IOU_big_cells + avg_IOU_small_cells) / 2
 
-            # add to list
-            avg_iou = (avg_IOU_big_cells + avg_IOU_small_cells)/2
         iou_list.append(avg_iou)
         iou_big_list.append(avg_IOU_big_cells)
-        iou_small_list.append(avg_IOU_small_cells)     
-        
+        iou_small_list.append(avg_IOU_small_cells)
+
     data = {
-        'iou': torch.FloatTensor(iou_list),
-        'iou_big': torch.FloatTensor(iou_big_list),
-        'iou_small': torch.FloatTensor(iou_small_list)
-    }       
+        "iou": torch.FloatTensor(iou_list),
+        "iou_big": torch.FloatTensor(iou_big_list),
+        "iou_small": torch.FloatTensor(iou_small_list),
+    }
 
     return data
-
 
 
 def compute_f1(

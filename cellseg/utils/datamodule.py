@@ -507,6 +507,7 @@ class DataModule(pl.LightningDataModule):
         path_data_predict: Optional[str] = None,
         batch_size: int = 2,
         shape: Tuple[int, int] = (512, 512),
+        transform_intensity: bool = False,
     ):
         """
 
@@ -525,6 +526,8 @@ class DataModule(pl.LightningDataModule):
             The default is 2.
         shape : Tuple[int, int], optional
             The default is (512, 512).
+        transform_intensity : bool, optional
+            If True random intensity transformations will be applied to image.
 
         Returns
         -------
@@ -540,6 +543,7 @@ class DataModule(pl.LightningDataModule):
         self.path_data_predict = path_data_predict
         self.batch_size = batch_size
         self.shape = shape
+        self.transform_intensity = transform_intensity
 
     def setup(self, stage: Optional[str] = None):
         """
@@ -556,15 +560,18 @@ class DataModule(pl.LightningDataModule):
                 ]
             )
 
-            transform_intensity = transforms.Compose(
-                [
-                    transforms.ColorJitter(
-                        brightness=0.7, contrast=0.5, saturation=0.5, hue=0.5
-                    ),
-                    transforms.GaussianBlur(kernel_size=5),
-                    transforms.RandomAdjustSharpness(4, p=0.5),
-                ]
-            )
+            if self.transform_intensity:
+                transform_intensity = transforms.Compose(
+                    [
+                        transforms.ColorJitter(
+                            brightness=0.7, contrast=0.5, saturation=0.5, hue=0.5
+                        ),
+                        transforms.GaussianBlur(kernel_size=5),
+                        transforms.RandomAdjustSharpness(4, p=0.5),
+                    ]
+                )
+            else:
+                transform_intensity = None
 
             self.data = Dataset(
                 self.path_data,
