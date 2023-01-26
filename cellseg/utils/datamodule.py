@@ -38,7 +38,8 @@ class Dataset:
     def __init__(
         self,
         path_data: str,
-        transform: Optional[transforms.transforms.Compose] = None,
+        transform_spatial: Optional[transforms.transforms.Compose] = None,
+        transform_intensity: Optional[transforms.transforms.Compose] = None,
         shape: Tuple[int, int] = (512, 512),
     ):
         """
@@ -48,8 +49,10 @@ class Dataset:
         ----------
         path_data : str
             path to csv file with images and masks.
-        transform : Optional[transforms.transforms.Compose], optional
-            transformation which can be applied on image and mask
+        transform_spatial : Optional[transforms.transforms.Compose], optional
+            transformation which are applied on image and mask
+        transform_intensity : Optional[transforms.transforms.Compose], optional
+            transformation which are applied to image only
         shape : Tuple[int, int], optional
             height and width which all images and masks will have in the end. The default is (512, 512).
 
@@ -71,12 +74,17 @@ class Dataset:
         ), f'path_data does not exist, you typed: "{path_data}".'
 
         # transformation
-        if transform is None:
-            transform = transforms.Compose([transforms.Normalize(0.0, 255.0)])
+        if transform_spatial is None:
+            transform_spatial = transforms.Compose([transforms.Normalize(0.0, 255.0)])
         else:
             assert (
-                type(transform) == transforms.transforms.Compose
-            ), f'transform should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform)}".'
+                type(transform_spatial) == transforms.transforms.Compose
+            ), f'transform_spatial should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_spatial)}".'
+
+        if transform_intensity is not None:
+            assert (
+                type(transform_intensity) == transforms.transforms.Compose
+            ), f'transform_intensity should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_intensity)}".'
 
         # assert shape
         assert (
@@ -90,7 +98,8 @@ class Dataset:
         self.path_data = path_data
         self.data = pd.read_csv(path_data)
         self.shape = shape
-        self.transform = transform
+        self.transform_spatial = transform_spatial
+        self.transform_intensity = transform_intensity
         self._padder = transforms.RandomCrop(self.shape, pad_if_needed=True)
 
     def __len__(self):
@@ -149,7 +158,7 @@ class Dataset:
         merged[1, :, :] = mask_trans
 
         merged_trans = self._padder(merged)
-        merged_trans = self.transform(merged_trans)
+        merged_trans = self.transform_spatial(merged_trans)
 
         # split images and masks after transformation again
         image_trans = merged_trans[0, :, :]
@@ -157,6 +166,10 @@ class Dataset:
 
         mask_trans = merged_trans[1, :, :]
         mask_trans = mask_trans[None, :, :]
+
+        # apply self.transfom_intensity
+        if self.transform_intensity is not None:
+            image_trans = self.transform_intensity(image_trans)
 
         return image_trans, mask_trans
 
@@ -258,8 +271,6 @@ class Dataset_test:
         ----------
         path_data_test : str
             path to csv file with images and masks.
-        transform : Optional[transforms.transforms.Compose], optional
-            transformation which can be applied on image and mask
 
         Returns
         -------
@@ -496,6 +507,7 @@ class DataModule(pl.LightningDataModule):
         path_data_predict: Optional[str] = None,
         batch_size: int = 2,
         shape: Tuple[int, int] = (512, 512),
+        transform_intensity: bool = False,
     ):
         """
 
@@ -514,6 +526,8 @@ class DataModule(pl.LightningDataModule):
             The default is 2.
         shape : Tuple[int, int], optional
             The default is (512, 512).
+        transform_intensity : bool, optional
+            If True random intensity transformations will be applied to image.
 
         Returns
         -------
@@ -529,6 +543,7 @@ class DataModule(pl.LightningDataModule):
         self.path_data_predict = path_data_predict
         self.batch_size = batch_size
         self.shape = shape
+        self.transform_intensity = transform_intensity
 
     def setup(self, stage: Optional[str] = None):
         """
@@ -537,18 +552,39 @@ class DataModule(pl.LightningDataModule):
         """
 
         if stage == "fit" or stage is None:
-            transform = transforms.Compose(
+            transform_spatial = transforms.Compose(
                 [
                     transforms.Normalize(0.0, 255.0),
                     transforms.RandomHorizontalFlip(),
-                    # transforms.RandomVerticalFlip(),
                     transforms.RandomRotation(45),
-                    # transforms.Lambda(lambda img: tf.adjust_gamma(img, gamma=random.uniform(0.5, 1.5)))
                 ]
             )
 
-            self.data = Dataset(self.path_data, transform, self.shape)
-            self.data_val = Dataset(self.path_data_val, transform, self.shape)
+            if self.transform_intensity:
+                transform_intensity = transforms.Compose(
+                    [
+                        transforms.ColorJitter(
+                            brightness=0.7, contrast=0.5, saturation=0.5, hue=0.5
+                        ),
+                        transforms.GaussianBlur(kernel_size=5),
+                        transforms.RandomAdjustSharpness(4, p=0.5),
+                    ]
+                )
+            else:
+                transform_intensity = None
+
+            self.data = Dataset(
+                self.path_data,
+                transform_spatial=transform_spatial,
+                transform_intensity=transform_intensity,
+                shape=self.shape,
+            )
+            self.data_val = Dataset(
+                self.path_data_val,
+                transform_spatial=transform_spatial,
+                transform_intensity=transform_intensity,
+                shape=self.shape,
+            )
 
         if stage == "test" or stage is None:
             if self.path_data_test is not None:

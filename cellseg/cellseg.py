@@ -116,6 +116,20 @@ def train():
     )
 
     parser.add_argument(
+        "--log_frequency",
+        type=int,
+        default=50,
+        help="Log performance metrics every N gradient steps during training. Default = 50.",
+    )
+
+    parser.add_argument(
+        "--loss_weight",
+        type=float,
+        default=1.0,
+        help="Weight of the foreground class compared to the background class for the binary cross entropy loss.",
+    )
+
+    parser.add_argument(
         "--bilinear",
         action="store_true",
         help="If flag is used, use bilinear upsampling, else transposed convolutions.",
@@ -132,6 +146,12 @@ def train():
         "--retrain",
         action="store_true",
         help="If flag is used, best scores for model saving will be reset (required for training on new data).",
+    )
+
+    parser.add_argument(
+        "--transform_intensity",
+        action="store_true",
+        help="If flag is used random intensity transformations will be applied to image.",
     )
 
     parser.add_argument(
@@ -155,11 +175,14 @@ def train():
     base_filters = args.base_filters
     shape = tuple(args.shape)
     receptive_field = args.receptive_field
+    log_frequency = args.log_frequency
 
     bilinear = args.bilinear
     multiprocessing = args.multiprocessing
     retrain = args.retrain
+    transform_intensity = args.transform_intensity
     seed = args.seed
+    loss_weight = args.loss_weight
 
     # create directories
     d = date.today()
@@ -214,7 +237,11 @@ def train():
 
     # set up data
     data_module = DataModule(
-        path_data=data, path_data_val=data_val, batch_size=batch_size, shape=shape
+        path_data=data,
+        path_data_val=data_val,
+        batch_size=batch_size,
+        shape=shape,
+        transform_intensity=transform_intensity,
     )
 
     # random seeding
@@ -232,6 +259,7 @@ def train():
             bilinear=bilinear,
             receptive_field=receptive_field,
             learning_rate=lr,
+            loss_weight=loss_weight,
         )
     else:
         raise ValueError(f'model type "{model}" is not implemented.')
@@ -252,6 +280,12 @@ def train():
     checkpoint_best_f1 = ModelCheckpoint(
         monitor="f1",
         filename="best-f1-{epoch}-{step}",
+        mode="max",
+    )
+
+    checkpoint_best_iou = ModelCheckpoint(
+        monitor="iou",
+        filename="best-iou-{epoch}-{step}",
         mode="max",
     )
 
@@ -283,10 +317,12 @@ def train():
         callbacks=[
             checkpoint_best_loss,
             checkpoint_best_f1,
+            checkpoint_best_iou,
             checkpoint_latest,
             CheckpointCallback(retrain=retrain),
         ],
-        sync_batchnorm=sync_batchnorm
+        sync_batchnorm=sync_batchnorm,
+        log_every_n_steps=log_frequency,
         # num_nodes = nnodes, # NOTE: currently not supported
     )
     trainer.fit(model, data_module, ckpt_path=checkpoint)
