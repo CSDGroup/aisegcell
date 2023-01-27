@@ -38,9 +38,11 @@ class Dataset:
     def __init__(
         self,
         path_data: str,
-        transform_spatial: Optional[transforms.transforms.Compose] = None,
-        transform_intensity: Optional[transforms.transforms.Compose] = None,
+        transform_both: Optional[transforms.transforms.Compose] = None,
+        transform_img: Optional[transforms.transforms.Compose] = None,
+        transform_mask: Optional[transforms.transforms.Compose] = None,
         shape: Tuple[int, int] = (512, 512),
+        bit_depth: int = 8,
     ):
         """
 
@@ -49,12 +51,16 @@ class Dataset:
         ----------
         path_data : str
             path to csv file with images and masks.
-        transform_spatial : Optional[transforms.transforms.Compose], optional
-            transformation which are applied on image and mask
-        transform_intensity : Optional[transforms.transforms.Compose], optional
+        transform_both : Optional[transforms.transforms.Compose], optional
+            transformation which are applied to image and mask
+        transform_img : Optional[transforms.transforms.Compose], optional
             transformation which are applied to image only
+        transform_mask : Optional[transforms.transforms.Compose], optional
+            transformation which are applied to mask only
         shape : Tuple[int, int], optional
             height and width which all images and masks will have in the end. The default is (512, 512).
+        bit_depth : int, optional
+            Bit depth of gray scale input images. The default is 8.
 
         Returns
         -------
@@ -74,17 +80,20 @@ class Dataset:
         ), f'path_data does not exist, you typed: "{path_data}".'
 
         # transformation
-        if transform_spatial is None:
-            transform_spatial = transforms.Compose([transforms.Normalize(0.0, 255.0)])
-        else:
+        if transform_both is not None:
             assert (
-                type(transform_spatial) == transforms.transforms.Compose
-            ), f'transform_spatial should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_spatial)}".'
+                type(transform_both) == transforms.transforms.Compose
+            ), f'transform_both should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_both)}".'
 
-        if transform_intensity is not None:
+        if transform_img is not None:
             assert (
-                type(transform_intensity) == transforms.transforms.Compose
-            ), f'transform_intensity should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_intensity)}".'
+                type(transform_img) == transforms.transforms.Compose
+            ), f'transform_img should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_img)}".'
+
+        if transform_mask is not None:
+            assert (
+                type(transform_mask) == transforms.transforms.Compose
+            ), f'transform_mask should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_mask)}".'
 
         # assert shape
         assert (
@@ -95,12 +104,27 @@ class Dataset:
             isinstance(i, int) for i in shape
         ), "values of shape should be of type integer."
 
+        assert (
+            type(bit_depth) == int
+        ), f'type of bit_depth should be int instead it is of type: "{type(bit_depth)}".'
+
         self.path_data = path_data
         self.data = pd.read_csv(path_data)
         self.shape = shape
-        self.transform_spatial = transform_spatial
-        self.transform_intensity = transform_intensity
+        self.transform_both = transform_both
+        self.transform_img = transform_img
+        self.transform_mask = transform_mask
         self._padder = transforms.RandomCrop(self.shape, pad_if_needed=True)
+
+        if bit_depth == 8:
+            self.bit_depth = np.uint8
+        elif bit_depth == 16:
+            self.bit_depth = np.int32
+        else:
+            self.bit_depth = np.uint8
+            raise Warning(
+                f'bit_depth must be in {8, 16}, but is "{bit_depth}". It will be handled as 8bit and may create an integer overflow.'
+            )
 
     def __len__(self):
         """
@@ -143,6 +167,7 @@ class Dataset:
 
         image = np.expand_dims(image, axis=2)
         image = image.transpose((2, 0, 1))  # (colorchannel,height,width)
+        image = image.astype(self.bit_depth)
 
         mask = np.expand_dims(mask, axis=2)
         mask = mask.transpose((2, 0, 1))  # (colorchannel,height,width)
@@ -150,26 +175,31 @@ class Dataset:
         image_trans = torch.from_numpy(image).type(torch.FloatTensor)
         mask_trans = torch.from_numpy(mask).type(torch.FloatTensor)
 
+        # apply self.transfom_img
+        if self.transform_img is not None:
+            image_trans = self.transform_img(image_trans)
+
+        # apply self.transfom_mask
+        if self.transform_mask is not None:
+            mask_trans = self.transform_mask(mask_trans)
+
         # merge image and masks for padding and transformations
         # to apply the same random augmentations to images and masks
-        _, height, width = image_trans.size()
-        merged = torch.zeros(2, height, width)
-        merged[0, :, :] = image_trans
-        merged[1, :, :] = mask_trans
+        if self.transform_both is not None:
+            _, height, width = image_trans.size()
+            merged = torch.zeros(2, height, width)
+            merged[0, :, :] = image_trans
+            merged[1, :, :] = mask_trans
 
-        merged_trans = self._padder(merged)
-        merged_trans = self.transform_spatial(merged_trans)
+            merged_trans = self._padder(merged)
+            merged_trans = self.transform_both(merged_trans)
 
-        # split images and masks after transformation again
-        image_trans = merged_trans[0, :, :]
-        image_trans = image_trans[None, :, :]
+            # split images and masks after transformation again
+            image_trans = merged_trans[0, :, :]
+            image_trans = image_trans[None, :, :]
 
-        mask_trans = merged_trans[1, :, :]
-        mask_trans = mask_trans[None, :, :]
-
-        # apply self.transfom_intensity
-        if self.transform_intensity is not None:
-            image_trans = self.transform_intensity(image_trans)
+            mask_trans = merged_trans[1, :, :]
+            mask_trans = mask_trans[None, :, :]
 
         return image_trans, mask_trans
 
@@ -263,6 +293,9 @@ class Dataset_test:
     def __init__(
         self,
         path_data_test: str,
+        transform_img: Optional[transforms.transforms.Compose] = None,
+        transform_mask: Optional[transforms.transforms.Compose] = None,
+        bit_depth: int = 8,
     ):
         """
 
@@ -271,6 +304,12 @@ class Dataset_test:
         ----------
         path_data_test : str
             path to csv file with images and masks.
+        transform_img : Optional[transforms.transforms.Compose], optional
+            transformation which are applied to image only
+        transform_mask : Optional[transforms.transforms.Compose], optional
+            transformation which are applied to mask only
+        bit_depth : int, optional
+            Bit depth of gray scale input images. The default is 8.
 
         Returns
         -------
@@ -289,8 +328,34 @@ class Dataset_test:
             path_data_test
         ), f'path_data does not exist, you typed: "{path_data_test}".'
 
+        if transform_img is not None:
+            assert (
+                type(transform_img) == transforms.transforms.Compose
+            ), f'transform_img should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_img)}".'
+
+        if transform_mask is not None:
+            assert (
+                type(transform_mask) == transforms.transforms.Compose
+            ), f'transform_mask should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_mask)}".'
+
+        assert (
+            type(bit_depth) == int
+        ), f'type of bit_depth should be int instead it is of type: "{type(bit_depth)}".'
+
         self.path_data_test = path_data_test
+        self.transform_img = transform_img
+        self.transform_mask = transform_mask
         self.data = pd.read_csv(path_data_test)
+
+        if bit_depth == 8:
+            self.bit_depth = np.uint8
+        elif bit_depth == 16:
+            self.bit_depth = np.int32
+        else:
+            self.bit_depth = np.uint8
+            raise Warning(
+                f'bit_depth must be in {8, 16}, but is "{bit_depth}". It will be handled as 8bit and may create an integer overflow.'
+            )
 
     def __len__(self):
         """
@@ -333,6 +398,7 @@ class Dataset_test:
 
         image = np.expand_dims(image, axis=2)
         image = image.transpose((2, 0, 1))  # (colorchannel,height,width)
+        image = image.astype(self.bit_depth)
 
         mask = np.expand_dims(mask, axis=2)
         mask = mask.transpose((2, 0, 1))  # (colorchannel,height,width)
@@ -340,10 +406,13 @@ class Dataset_test:
         image_trans = torch.from_numpy(image).type(torch.FloatTensor)
         mask_trans = torch.from_numpy(mask).type(torch.FloatTensor)
 
-        # normalize image and mask
-        transform = transforms.Compose([transforms.Normalize(0.0, 255.0)])
-        image_trans = transform(image_trans)
-        mask_trans = transform(mask_trans)
+        # apply self.transfom_img
+        if self.transform_img is not None:
+            image_trans = self.transform_img(image_trans)
+
+        # apply self.transfom_mask
+        if self.transform_mask is not None:
+            mask_trans = self.transform_mask(mask_trans)
 
         return image_trans, mask_trans
 
@@ -396,6 +465,8 @@ class Dataset_predict:
     def __init__(
         self,
         path_data_predict: str,
+        transform_img: Optional[transforms.transforms.Compose] = None,
+        bit_depth: int = 8,
     ):
         """
 
@@ -403,6 +474,10 @@ class Dataset_predict:
         ----------
         path_data_predict : str
             path to prediction data
+        transform_img : Optional[transforms.transforms.Compose], optional
+            transformation which are applied to image only
+        bit_depth : int, optional
+            Bit depth of gray scale input images. The default is 8.
 
         Returns
         -------
@@ -421,8 +496,28 @@ class Dataset_predict:
             type(path_data_predict) == str
         ), f'path_data_predict should be of type "str" but is of type "{type(path_data_predict)}".'
 
+        if transform_img is not None:
+            assert (
+                type(transform_img) == transforms.transforms.Compose
+            ), f'transform_img should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_img)}".'
+
+        assert (
+            type(bit_depth) == int
+        ), f'type of bit_depth should be int instead it is of type: "{type(bit_depth)}".'
+
         self.path_data_predict = path_data_predict
+        self.transform_img = transform_img
         self.data = pd.read_csv(path_data_predict)
+
+        if bit_depth == 8:
+            self.bit_depth = np.uint8
+        elif bit_depth == 16:
+            self.bit_depth = np.int32
+        else:
+            self.bit_depth = np.uint8
+            raise Warning(
+                f'bit_depth must be in {8, 16}, but is "{bit_depth}". It will be handled as 8bit and may create an integer overflow.'
+            )
 
     def __len__(self):
         """
@@ -458,11 +553,13 @@ class Dataset_predict:
 
         image = np.expand_dims(image, axis=2)
         image = image.transpose((2, 0, 1))  # (colorchanel,height,width)
+        image = image.astype(self.bit_depth)
 
         image_trans = torch.from_numpy(image).type(torch.FloatTensor)
 
-        transform = transforms.Normalize(0.0, 255.0)
-        image_trans = transform(image_trans)
+        # apply self.transfom_img
+        if self.transform_img is not None:
+            image_trans = self.transform_img(image_trans)
 
         return image_trans
 
@@ -550,19 +647,41 @@ class DataModule(pl.LightningDataModule):
         Instantiate datasets
 
         """
+        # catch image data type
+        tmp = pd.read_csv(self.path_data)
+        img = io.imread(tmp.bf[0])
+
+        if img.dtype == np.uint8:
+            max_intensity = 255.0
+            bit_depth = 8
+        elif img.dtype == np.uint16:
+            max_intensity = 65535.0
+            bit_depth = 16
+        else:
+            max_intensity = 255.0
+            bit_depth = 8
+            raise Warning(
+                f'Image type "{img.dtype}" is currently not supported and will be converted to "uint8".'
+            )
 
         if stage == "fit" or stage is None:
-            transform_spatial = transforms.Compose(
+            transform_both = transforms.Compose(
                 [
-                    transforms.Normalize(0.0, 255.0),
                     transforms.RandomHorizontalFlip(),
                     transforms.RandomRotation(45),
                 ]
             )
 
+            transform_mask = transforms.Compose(
+                [
+                    transforms.Normalize(0.0, 255.0),
+                ]
+            )
+
             if self.transform_intensity:
-                transform_intensity = transforms.Compose(
+                transform_img = transforms.Compose(
                     [
+                        transforms.Normalize(0.0, max_intensity),
                         transforms.ColorJitter(
                             brightness=0.7, contrast=0.5, saturation=0.5, hue=0.5
                         ),
@@ -571,33 +690,63 @@ class DataModule(pl.LightningDataModule):
                     ]
                 )
             else:
-                transform_intensity = None
+                transform_img = transforms.Compose(
+                    [
+                        transforms.Normalize(0.0, max_intensity),
+                    ]
+                )
 
             self.data = Dataset(
                 self.path_data,
-                transform_spatial=transform_spatial,
-                transform_intensity=transform_intensity,
+                transform_both=transform_both,
+                transform_img=transform_img,
+                transform_mask=transform_mask,
                 shape=self.shape,
+                bit_depth=bit_depth,
             )
             self.data_val = Dataset(
                 self.path_data_val,
-                transform_spatial=transform_spatial,
-                transform_intensity=transform_intensity,
+                transform_both=transform_both,
+                transform_img=transform_img,
+                transform_mask=transform_mask,
                 shape=self.shape,
+                bit_depth=bit_depth,
             )
 
         if stage == "test" or stage is None:
+            transform_mask = transforms.Compose(
+                [
+                    transforms.Normalize(0.0, 255.0),
+                ]
+            )
+            transform_img = transforms.Compose(
+                [
+                    transforms.Normalize(0.0, max_intensity),
+                ]
+            )
+
             if self.path_data_test is not None:
                 self.data_test = Dataset_test(
                     self.path_data_test,
+                    transform_img=transform_img,
+                    transform_mask=transform_mask,
+                    bit_depth=bit_depth,
                 )
             else:
                 raise ValueError("path_data_test is missing")
 
         if stage == "predict" or stage is None:
+            transform_img = transforms.Compose(
+                [
+                    transforms.Normalize(0.0, max_intensity),
+                ]
+            )
+
             if self.path_data_predict is not None:
                 self.data_predict = Dataset_predict(
                     self.path_data_predict,
+                    transform_img=transform_img,
+                    bit_depth=bit_depth,
                 )
             else:
                 raise ValueError("path_data_predict is missing")

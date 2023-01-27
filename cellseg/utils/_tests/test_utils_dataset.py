@@ -37,7 +37,22 @@ def test_preprocess(csv_file):
     tests preprocess step. Input image and mask
     -->output should be normalised tensor
     """
-    dataset = Dataset(csv_file, shape=(2, 2))
+    transform_img = transforms.Compose(
+        [
+            transforms.Normalize(0.0, 255.0),
+        ]
+    )
+    transform_mask = transforms.Compose(
+        [
+            transforms.Normalize(0.0, 255.0),
+        ]
+    )
+    dataset = Dataset(
+        csv_file,
+        shape=(2, 2),
+        transform_img=transform_img,
+        transform_mask=transform_mask,
+    )
 
     image = np.array([[0, 51], [255, 0]])
     mask = np.array([[51, 102], [0, 255]])
@@ -86,7 +101,19 @@ def test_preprocess_test(csv_file):
     tests normalisation step
 
     """
-    dataset_test = Dataset_test(csv_file)
+    transform_img = transforms.Compose(
+        [
+            transforms.Normalize(0.0, 255.0),
+        ]
+    )
+    transform_mask = transforms.Compose(
+        [
+            transforms.Normalize(0.0, 255.0),
+        ]
+    )
+    dataset_test = Dataset_test(
+        csv_file, transform_img=transform_img, transform_mask=transform_mask
+    )
 
     image = np.array([[0, 51], [255, 0]])
     mask = np.array([[51, 102], [0, 255]])
@@ -109,7 +136,12 @@ def test_preprocess_predict(csv_file):
     tests normalisation step
 
     """
-    dataset_pred = Dataset_predict(csv_file)
+    transform_img = transforms.Compose(
+        [
+            transforms.Normalize(0.0, 255.0),
+        ]
+    )
+    dataset_pred = Dataset_predict(csv_file, transform_img=transform_img)
 
     image = np.array([[0, 51], [255, 0]])
 
