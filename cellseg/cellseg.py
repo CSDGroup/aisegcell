@@ -350,6 +350,13 @@ def _args_inference():
     )
 
     parser.add_argument(
+        "--suffix",
+        type=str,
+        default="",
+        help="Suffix to append to all mask file names.",
+    )
+
+    parser.add_argument(
         "--output_base_dir",
         type=str,
         help="Path to output directory.",
@@ -367,7 +374,11 @@ def _args_inference():
 
 
 def _initialise_inferrence(
-    data: str, model: str, devices: List[str], output_base_dir: str
+    data: str,
+    model: str,
+    devices: List[str],
+    output_base_dir: str,
+    suffix: str,
 ) -> Tuple[pl.Trainer, pl.LightningModule, pl.LightningDataModule]:
     """
     Construct trainer, model, and data module for testing/predicting
@@ -389,6 +400,7 @@ def _initialise_inferrence(
     # load model
     if os.path.isfile(model):
         model = LitUnet.load_from_checkpoint(model)
+        model.suffix = suffix
     else:
         raise FileNotFoundError(f'The file "{model}" does not exist.')
 
@@ -413,22 +425,34 @@ def _initialise_inferrence(
     return trainer, model, data_module
 
 
-def test(data: str, model: str, devices: List[str], output_base_dir: str) -> None:
+def test(
+    data: str, model: str, devices: List[str], output_base_dir: str, suffix: str
+) -> None:
     """
     Run model testing.
     """
     trainer, model, data_module = _initialise_inferrence(
-        data=data, model=model, devices=devices, output_base_dir=output_base_dir
+        data=data,
+        model=model,
+        devices=devices,
+        output_base_dir=output_base_dir,
+        suffix=suffix,
     )
     trainer.test(model, data_module)
 
 
-def predict(data: str, model: str, devices: List[str], output_base_dir: str) -> None:
+def predict(
+    data: str, model: str, devices: List[str], output_base_dir: str, suffix: str
+) -> None:
     """
     Run model prediction.
     """
     trainer, model, data_module = _initialise_inferrence(
-        data=data, model=model, devices=devices, output_base_dir=output_base_dir
+        data=data,
+        model=model,
+        devices=devices,
+        output_base_dir=output_base_dir,
+        suffix=suffix,
     )
     trainer.predict(model, data_module)
 
@@ -441,10 +465,17 @@ def test_cli():
 
     data = args.data
     model = args.model
+    suffix = args.suffix
     devices = args.devices
     output_base_dir = args.output_base_dir
 
-    test(data=data, model=model, devices=devices, output_base_dir=output_base_dir)
+    test(
+        data=data,
+        model=model,
+        devices=devices,
+        output_base_dir=output_base_dir,
+        suffix=suffix,
+    )
 
 
 def predict_cli():
@@ -455,7 +486,14 @@ def predict_cli():
 
     data = args.data
     model = args.model
+    suffix = args.suffix
     devices = args.devices
     output_base_dir = args.output_base_dir
 
-    predict(data=data, model=model, devices=devices, output_base_dir=output_base_dir)
+    predict(
+        data=data,
+        model=model,
+        devices=devices,
+        output_base_dir=output_base_dir,
+        suffix=suffix,
+    )

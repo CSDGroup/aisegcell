@@ -327,6 +327,7 @@ class LitUnet(pl.LightningModule):
         receptive_field: int = 128,
         learning_rate: float = 1e-3,
         loss_weight: float = 1.0,
+        suffix: str = "",
         **kwargs,
     ):
         """
@@ -342,6 +343,8 @@ class LitUnet(pl.LightningModule):
             The default is 128. Must be power of 2.
         learning_rate : float, optional
             The default is 1e-3.
+        suffix : str, optional
+            String that will be appended to every mask saved in predict/test step.
 
         Returns
         -------
@@ -372,6 +375,9 @@ class LitUnet(pl.LightningModule):
         assert isinstance(
             loss_weight, float
         ), f'loss_weight is expected to be of type "float" but is of type "{type(loss_weight)}".'
+        assert isinstance(
+            suffix, str
+        ), f'suffix is expected to be of type "str" but is of type "{type(suffix)}".'
 
         self.bilinear = bilinear
         self.base_filters = base_filters
@@ -382,6 +388,7 @@ class LitUnet(pl.LightningModule):
         self.receptive_field = receptive_field
         self.lr = learning_rate
         self.loss_weight = loss_weight
+        self.suffix = suffix
         self.unet = UNet_rec(
             bilinear=self.bilinear,
             base_filters=self.base_filters,
@@ -542,6 +549,9 @@ class LitUnet(pl.LightningModule):
             mask_path = self.trainer.datamodule.data_test.data.iloc[i.item(), 0].split(
                 os.sep
             )[-1]
+            mask_path = mask_path.split(".")
+            mask_path[-2] = mask_path[-2] + self.suffix
+            mask_path = ".".join(mask_path)
             mask_path = os.path.join(
                 self.trainer.logger.log_dir, "test_masks", mask_path
             )
@@ -561,6 +571,9 @@ class LitUnet(pl.LightningModule):
             img_path = self.trainer.datamodule.data_predict.data.iloc[
                 i.item(), 0
             ].split(os.sep)[-1]
+            img_path = img_path.split(".")
+            img_path[-2] = img_path[-2] + self.suffix
+            img_path = ".".join(img_path)
             img_path = os.path.join(
                 self.trainer.logger.log_dir, "predicted_masks", img_path
             )
