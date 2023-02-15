@@ -16,7 +16,7 @@ def csv_file(tmp_path_factory):
     my_file = tmp_path_factory.mktemp("data") / "myfile.csv"
     my_file.touch()
 
-    df = pd.DataFrame({"a": ["a", "b", "c"]})
+    df = pd.DataFrame({"bf": ["a", "b", "c"], "mask": [1, 2, 3]})
     df.to_csv(my_file.as_posix(), index=False)
 
     return my_file.as_posix()
