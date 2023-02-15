@@ -37,7 +37,7 @@ class Dataset:
 
     def __init__(
         self,
-        path_data: str,
+        path_data: Union[str, pathlib.PosixPath],
         transform_both: Optional[transforms.transforms.Compose] = None,
         transform_img: Optional[transforms.transforms.Compose] = None,
         transform_mask: Optional[transforms.transforms.Compose] = None,
@@ -49,7 +49,7 @@ class Dataset:
 
         Parameters
         ----------
-        path_data : str
+        path_data : Union[str, pathlib.PosixPath]
             path to csv file with images and masks.
         transform_both : Optional[transforms.transforms.Compose], optional
             transformation which are applied to image and mask
@@ -71,9 +71,10 @@ class Dataset:
         super().__init__()
 
         # assert input path
-        assert (
-            type(path_data) == str
-        ), f'path_data should be of type "str" but is of type "{type(path_data)}".'
+        assert type(path_data) in (
+            str,
+            pathlib.PosixPath,
+        ), f'path_data should be of type "str"/"pathlib.PosixPath" but is of type "{type(path_data)}".'
 
         assert path.exists(
             path_data
@@ -251,7 +252,7 @@ class Dataset:
         Parameters
         ----------
         idx : Union[int, str]
-            Index to image, eitcher "random" or int.
+            Index to image, either "random" or int.
 
         Raises
         ------
@@ -296,7 +297,7 @@ class Dataset_test:
 
     def __init__(
         self,
-        path_data_test: str,
+        path_data_test: Union[str, pathlib.PosixPath],
         transform_img: Optional[transforms.transforms.Compose] = None,
         transform_mask: Optional[transforms.transforms.Compose] = None,
         bit_depth: int = 8,
@@ -306,7 +307,7 @@ class Dataset_test:
 
         Parameters
         ----------
-        path_data_test : str
+        path_data_test : Union[str, pathlib.PosixPath]
             path to csv file with images and masks.
         transform_img : Optional[transforms.transforms.Compose], optional
             transformation which are applied to image only
@@ -324,9 +325,10 @@ class Dataset_test:
         super().__init__()
 
         # assert input path
-        assert (
-            type(path_data_test) == str
-        ), f'path_data_test should be of type "str" but is of type "{type(path_data_test)}".'
+        assert type(path_data_test) in (
+            str,
+            pathlib.PosixPath,
+        ), f'path_data_test should be of type "str"/"pathlib.PosixPath" but is of type "{type(path_data_test)}".'
 
         assert path.exists(
             path_data_test
@@ -472,7 +474,7 @@ class Dataset_predict:
 
     def __init__(
         self,
-        path_data_predict: str,
+        path_data_predict: Union[str, pathlib.PosixPath],
         transform_img: Optional[transforms.transforms.Compose] = None,
         bit_depth: int = 8,
     ):
@@ -480,7 +482,7 @@ class Dataset_predict:
 
         Parameters
         ----------
-        path_data_predict : str
+        path_data_predict : Union[str, pathlib.PosixPath]
             path to prediction data
         transform_img : Optional[transforms.transforms.Compose], optional
             transformation which are applied to image only
@@ -496,13 +498,14 @@ class Dataset_predict:
         super().__init__()
 
         # assert input path
+        assert type(path_data_predict) in (
+            str,
+            pathlib.PosixPath,
+        ), f'path_data_predict should be of type "str"/"pathlib.PosixPath" but is of type "{type(path_data_predict)}".'
+
         assert path.exists(
             path_data_predict
         ), f'path to path_predict_data does not exist, you typed: "{path_data_predict}".'
-
-        assert (
-            type(path_data_predict) == str
-        ), f'path_data_predict should be of type "str" but is of type "{type(path_data_predict)}".'
 
         if transform_img is not None:
             assert (
@@ -608,10 +611,10 @@ class DataModule(pl.LightningDataModule):
 
     def __init__(
         self,
-        path_data: str,
-        path_data_val: str,
-        path_data_test: Optional[str] = None,
-        path_data_predict: Optional[str] = None,
+        path_data: Union[str, pathlib.PosixPath],
+        path_data_val: Union[str, pathlib.PosixPath],
+        path_data_test: Optional[Union[str, pathlib.PosixPath]] = None,
+        path_data_predict: Optional[Union[str, pathlib.PosixPath]] = None,
         batch_size: int = 2,
         shape: Tuple[int, int] = (512, 512),
         transform_intensity: bool = False,
@@ -621,13 +624,13 @@ class DataModule(pl.LightningDataModule):
 
         Parameters
         ----------
-        path_data : str
+        path_data : Union[str, pathlib.PosixPath]
             path to train data (csv file).
-        path_data_val : str
+        path_data_val : Union[str, pathlib.PosixPath]
             path to validation data (csv file).
-        path_data_test : Optional[str], optional
+        path_data_test : Optional[Union[str, pathlib.PosixPath]], optional
             path to test data (csv file). The default is None.
-        path_data_predict : Optional[str], optional
+        path_data_predict : Optional[Union[str, pathlib.PosixPath]], optional
             path to prediction data (csv file). The default is None.
         batch_size : int, optional
             The default is 2.
