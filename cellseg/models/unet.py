@@ -546,15 +546,18 @@ class LitUnet(pl.LightningModule):
 
         # save inferred masks
         for mask, i in zip(masks_hat, ids):
-            mask_path = self.trainer.datamodule.data_test.data.iloc[i.item(), 0].split(
-                os.sep
-            )[-1]
-            mask_path = mask_path.split(".")
-            mask_path[-2] = mask_path[-2] + self.suffix
-            mask_path = ".".join(mask_path)
-            mask_path = os.path.join(
-                self.trainer.logger.log_dir, "test_masks", mask_path
-            )
+            if "out" in self.trainer.datamodule.data_test.data.columns:
+                mask_path = self.trainer.datamodule.data_test.data.out[i.item()]
+            else:
+                mask_path = self.trainer.datamodule.data_test.data.iloc[
+                    i.item(), 0
+                ].split(os.sep)[-1]
+                mask_path = mask_path.split(".")
+                mask_path[-2] = mask_path[-2] + self.suffix
+                mask_path = ".".join(mask_path)
+                mask_path = os.path.join(
+                    self.trainer.logger.log_dir, "test_masks", mask_path
+                )
             save_image_mod(mask, mask_path, nrow=1, padding=0)
 
         return loss_test
@@ -568,15 +571,18 @@ class LitUnet(pl.LightningModule):
 
         # save predicted masks
         for img, i in zip(masks_hat, ids):
-            img_path = self.trainer.datamodule.data_predict.data.iloc[
-                i.item(), 0
-            ].split(os.sep)[-1]
-            img_path = img_path.split(".")
-            img_path[-2] = img_path[-2] + self.suffix
-            img_path = ".".join(img_path)
-            img_path = os.path.join(
-                self.trainer.logger.log_dir, "predicted_masks", img_path
-            )
+            if "out" in self.trainer.datamodule.data_predict.data.columns:
+                img_path = self.trainer.datamodule.data_predict.data.out[i.item()]
+            else:
+                img_path = self.trainer.datamodule.data_predict.data.iloc[
+                    i.item(), 0
+                ].split(os.sep)[-1]
+                img_path = img_path.split(".")
+                img_path[-2] = img_path[-2] + self.suffix
+                img_path = ".".join(img_path)
+                img_path = os.path.join(
+                    self.trainer.logger.log_dir, "predicted_masks", img_path
+                )
             save_image_mod(img, img_path, nrow=1, padding=0)
 
         return masks_hat
