@@ -549,9 +549,9 @@ class LitUnet(pl.LightningModule):
             if "out" in self.trainer.datamodule.data_test.data.columns:
                 mask_path = self.trainer.datamodule.data_test.data.out[i.item()]
             else:
-                mask_path = self.trainer.datamodule.data_test.data.iloc[
-                    i.item(), 0
-                ].split(os.sep)[-1]
+                mask_path = self.trainer.datamodule.data_test.data.bf[i.item()].split(
+                    os.sep
+                )[-1]
                 mask_path = mask_path.split(".")
                 mask_path[-2] = mask_path[-2] + self.suffix
                 mask_path = ".".join(mask_path)
@@ -574,9 +574,9 @@ class LitUnet(pl.LightningModule):
             if "out" in self.trainer.datamodule.data_predict.data.columns:
                 img_path = self.trainer.datamodule.data_predict.data.out[i.item()]
             else:
-                img_path = self.trainer.datamodule.data_predict.data.iloc[
-                    i.item(), 0
-                ].split(os.sep)[-1]
+                img_path = self.trainer.datamodule.data_predict.data.bf[i.item()].split(
+                    os.sep
+                )[-1]
                 img_path = img_path.split(".")
                 img_path[-2] = img_path[-2] + self.suffix
                 img_path = ".".join(img_path)

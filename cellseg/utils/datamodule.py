@@ -116,6 +116,10 @@ class Dataset:
         self.transform_mask = transform_mask
         self._padder = transforms.RandomCrop(self.shape, pad_if_needed=True)
 
+        assert all(
+            col in self.data.columns for col in ("bf", "mask")
+        ), 'The input file requires ("bf", "mask") as headers.'
+
         if bit_depth == 8:
             self.bit_depth = np.uint8
         elif bit_depth == 16:
@@ -223,11 +227,11 @@ class Dataset:
 
         """
 
-        image_path = self.data.iloc[idx, 0]
+        image_path = self.data.bf[idx]
         image = io.imread(image_path)
         # image in format (height, width) or (depth, height, width)
 
-        mask_path = self.data.iloc[idx, 1]
+        mask_path = self.data.mask[idx]
         mask = io.imread(mask_path)
         # mask in format (height, width) or (depth, height, width)
 
@@ -267,9 +271,9 @@ class Dataset:
         if idx == "random":
             idx = random.choice(self.data.index)
 
-        image = io.imread(self.data.iloc[idx, 0])
+        image = io.imread(self.data.bf[idx])
 
-        mask = io.imread(self.data.iloc[idx, 1])
+        mask = io.imread(self.data.mask[idx])
 
         if len(image.shape) == 2:
             f = plt.figure()
@@ -346,6 +350,10 @@ class Dataset_test:
         self.transform_img = transform_img
         self.transform_mask = transform_mask
         self.data = pd.read_csv(path_data_test)
+
+        assert all(
+            col in self.data.columns for col in ("bf", "mask")
+        ), 'The input file requires ("bf", "mask") as headers.'
 
         if bit_depth == 8:
             self.bit_depth = np.uint8
@@ -436,11 +444,11 @@ class Dataset_test:
 
         """
 
-        image_path = self.data.iloc[idx, 0]
+        image_path = self.data.bf[idx]
         image = io.imread(image_path)
         # image in format (height, width) or (depth, height, width)
 
-        mask_path = self.data.iloc[idx, 1]
+        mask_path = self.data.mask[idx]
         mask = io.imread(mask_path)
         # mask in format (height, width) or (depth, height, width)
 
@@ -508,6 +516,8 @@ class Dataset_predict:
         self.path_data_predict = path_data_predict
         self.transform_img = transform_img
         self.data = pd.read_csv(path_data_predict)
+
+        assert "bf" in self.data.columns, 'The input file requires "bf" as a header.'
 
         if bit_depth == 8:
             self.bit_depth = np.uint8
@@ -581,7 +591,7 @@ class Dataset_predict:
 
         """
 
-        image_path = self.data.iloc[idx, 0]
+        image_path = self.data.bf[idx]
         image = io.imread(image_path)
         # image in format (height, width) or (depth, height, width)
 
