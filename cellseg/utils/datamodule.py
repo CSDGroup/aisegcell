@@ -776,7 +776,7 @@ class DataModule(pl.LightningDataModule):
         return DataLoader(self.data_test, batch_size=self.batch_size, num_workers=4)
 
     def predict_dataloader(self):
-        return DataLoader(self.data_predict, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(self.data_predict, batch_size=self.batch_size, num_workers=0)
 
 
 def save_image_mod(

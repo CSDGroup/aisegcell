@@ -379,6 +379,7 @@ def _initialise_inferrence(
     devices: List[str],
     output_base_dir: str,
     suffix: str,
+    napari: bool = False,
 ) -> Tuple[pl.Trainer, pl.LightningModule, pl.LightningDataModule]:
     """
     Construct trainer, model, and data module for testing/predicting
@@ -401,6 +402,7 @@ def _initialise_inferrence(
     if os.path.isfile(model):
         model = LitUnet.load_from_checkpoint(model)
         model.suffix = suffix
+        model.napari = napari
     else:
         raise FileNotFoundError(f'The file "{model}" does not exist.')
 
@@ -442,7 +444,12 @@ def test(
 
 
 def predict(
-    data: str, model: str, devices: List[str], output_base_dir: str, suffix: str
+    data: str,
+    model: str,
+    devices: List[str],
+    output_base_dir: str,
+    suffix: str,
+    napari: bool = False,
 ) -> None:
     """
     Run model prediction.
@@ -453,6 +460,7 @@ def predict(
         devices=devices,
         output_base_dir=output_base_dir,
         suffix=suffix,
+        napari=napari,
     )
     trainer.predict(model, data_module)
 

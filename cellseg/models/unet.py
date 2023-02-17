@@ -328,6 +328,7 @@ class LitUnet(pl.LightningModule):
         learning_rate: float = 1e-3,
         loss_weight: float = 1.0,
         suffix: str = "",
+        napari: bool = False,
         **kwargs,
     ):
         """
@@ -345,6 +346,8 @@ class LitUnet(pl.LightningModule):
             The default is 1e-3.
         suffix : str, optional
             String that will be appended to every mask saved in predict/test step.
+        npari : bool
+            If true do not create an output folder on_predict_start.
 
         Returns
         -------
@@ -378,6 +381,9 @@ class LitUnet(pl.LightningModule):
         assert isinstance(
             suffix, str
         ), f'suffix is expected to be of type "str" but is of type "{type(suffix)}".'
+        assert isinstance(
+            napari, bool
+        ), f'napari is expected to be of type "bool" but is of type "{type(napari)}".'
 
         self.bilinear = bilinear
         self.base_filters = base_filters
@@ -389,6 +395,7 @@ class LitUnet(pl.LightningModule):
         self.lr = learning_rate
         self.loss_weight = loss_weight
         self.suffix = suffix
+        self.napari = napari
         self.unet = UNet_rec(
             bilinear=self.bilinear,
             base_filters=self.base_filters,
@@ -597,6 +604,8 @@ class LitUnet(pl.LightningModule):
         )
 
     def on_predict_start(self):
-        os.makedirs(
-            os.path.join(self.trainer.logger.log_dir, "predicted_masks"), exist_ok=True
-        )
+        if not self.napari:
+            os.makedirs(
+                os.path.join(self.trainer.logger.log_dir, "predicted_masks"),
+                exist_ok=True,
+            )
