@@ -1,5 +1,18 @@
-# cell_segmentation
-This repository contains a pipeline to segment cell bodies.
+# *CellSeg* - Overview
+This repository contains a `torch` implementation of U-Net ([Ronneberger et al., 2015](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)). Please cite [this paper](#citation) if you are using
+this code in your research.
+
+## Contents
+  - [Installation](#installation)
+  - [Training](#training)
+    - [Pretrained models](#pretrained-models)
+  - [Testing](#testing)
+  - [Predicting](#predicting)
+    - [napari plugin](#napari-plugin)
+  - [Other resources](#other-resources)
+    - [image annotation tools](#image-annotation-tools)
+  - [Troubleshooting & support](#troubleshooting-&-support):fire:
+  - [Citation](#citation):page_facing_up:
 
 ## Installation
 1) clone the repository (consider `ssh` alternative)
@@ -46,3 +59,22 @@ tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda`
 7) [Install `pytorch-lightning`](https://www.pytorchlightning.ai) compatible with your system. cell_segmentation
 was tested with version `1.5.9`.
 
+## Training
+
+### Pretrained models
+
+## Testing
+
+## Predicting
+
+### napari plugin
+
+## Other resources
+
+### Image annotation tools
+
+## Troubleshooting & support
+
+
+## Citation
+t.b.d.
