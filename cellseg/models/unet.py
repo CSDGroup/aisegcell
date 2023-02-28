@@ -592,8 +592,6 @@ class LitUnet(pl.LightningModule):
                 )
             save_image_mod(img, img_path, nrow=1, padding=0)
 
-        return masks_hat
-
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         return optimizer

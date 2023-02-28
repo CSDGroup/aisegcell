@@ -229,11 +229,11 @@ class Dataset:
 
         """
 
-        image_path = self.data.bf[idx]
+        image_path = self.data.loc[idx, "bf"]
         image = io.imread(image_path)
         # image in format (height, width) or (depth, height, width)
 
-        mask_path = self.data.mask[idx]
+        mask_path = self.data.loc[idx, "mask"]
         mask = io.imread(mask_path)
         # mask in format (height, width) or (depth, height, width)
 
@@ -448,11 +448,11 @@ class Dataset_test:
 
         """
 
-        image_path = self.data.bf[idx]
+        image_path = self.data.loc[idx, "bf"]
         image = io.imread(image_path)
         # image in format (height, width) or (depth, height, width)
 
-        mask_path = self.data.mask[idx]
+        mask_path = self.data.loc[idx, "mask"]
         mask = io.imread(mask_path)
         # mask in format (height, width) or (depth, height, width)
 
@@ -597,7 +597,7 @@ class Dataset_predict:
 
         """
 
-        image_path = self.data.bf[idx]
+        image_path = self.data.loc[idx, "bf"]
         image = io.imread(image_path)
         # image in format (height, width) or (depth, height, width)
 
