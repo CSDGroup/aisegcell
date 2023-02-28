@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 # *CellSeg* - Overview
 This repository contains a `torch` implementation of U-Net ([Ronneberger et al., 2015](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)). Please cite [this paper](#citation) if you are using
 this code in your research.
@@ -11,8 +13,8 @@ this code in your research.
     - [napari plugin](#napari-plugin)
   - [Other resources](#other-resources)
     - [image annotation tools](#image-annotation-tools)
-  - [Troubleshooting & support](#troubleshooting-&-support):fire:
-  - [Citation](#citation):page_facing_up:
+  - [Troubleshooting & support](#troubleshooting-&-support)
+  - [Citation](#citation)
 
 ## Installation
 1) clone the repository (consider `ssh` alternative)
