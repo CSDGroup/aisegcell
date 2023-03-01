@@ -183,7 +183,7 @@ The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1
     - `iou_big_step`: [intersection over union](https://www.biorxiv.org/content/10.1101/803205v2) of objects with 
       \> 2000 px in size per validation mini-batch
     - `iou_small_step`: [intersection over union](https://www.biorxiv.org/content/10.1101/803205v2) of objects
-      with \leq 2000 px in size per validation mini-batch
+      with $$\leq$$ 2000 px in size per validation mini-batch
     - `loss_val_epoch`: average `loss_val_step` over all validation steps per epoch
     - `f1_epoch`: average `f1_step` over all validation steps per epoch
     - `iou_epoch`: average `iou_step` over all validation steps per epoch
