@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Test](https://github.com/stardist/stardist/workflows/Test/badge.svg)](https://github.com/stardist/stardist/actions?query=workflow%3ATest)
+[![tests](https://github.com/CSDGroup/cell_segmentation/workflows/tests/badge.svg)](https://github.com/CSDGroup/cell_segmentation/actions)
 
 # *CellSeg* - Overview
 This repository contains a `torch` implementation of U-Net ([Ronneberger et al., 2015](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)). Please cite [this paper](#citation) if you are using
