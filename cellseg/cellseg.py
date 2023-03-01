@@ -34,13 +34,13 @@ def train():
     parser.add_argument(
         "--data",
         type=str,
-        help="Path to .csv file containing training image file paths.",
+        help="Path to CSV file containing training image file paths.",
     )
 
     parser.add_argument(
         "--data_val",
         type=str,
-        help="Path to .csv file containing validation image file paths.",
+        help="Path to CSV file containing validation image file paths.",
     )
 
     parser.add_argument(
@@ -54,7 +54,7 @@ def train():
         "--checkpoint",
         type=str,
         default=None,
-        help="(Optional) Path to checkpoint file of trained pl.LightningModule.",
+        help="Path to checkpoint file of trained pl.LightningModule.",
     )
 
     parser.add_argument(
@@ -69,35 +69,35 @@ def train():
         "--output_base_dir",
         type=str,
         default="C:/Users/melin/OneDrive/Dokumente/Master/4.Semester/Lab_rotations/CSD_group/output",
-        help="Path to output directory.Default is to my uni-folder",
+        help="Path to output directory.",
     )
 
     parser.add_argument(
         "--epochs",
         type=int,
         default=5,
-        help="Number of training epochs. Default is 5",
+        help="Number of training epochs. Default is 5.",
     )
 
     parser.add_argument(
         "--batch_size",
         type=int,
         default=2,
-        help="Number of samples per mini-batch. Default is 2",
+        help="Number of samples per mini-batch. Default is 2.",
     )
 
     parser.add_argument(
         "--lr",
         type=float,
         default=1e-4,
-        help="Learning rate of the optimizer. Default is 1e-4",
+        help="Learning rate of the optimizer. Default is 1e-4.",
     )
 
     parser.add_argument(
         "--base_filters",
         type=int,
         default=32,
-        help="Number of base_filters of Unet.Default = 32",
+        help="Number of base_filters of Unet.Default is 32.",
     )
 
     parser.add_argument(
@@ -105,28 +105,28 @@ def train():
         type=int,
         nargs="+",
         default=[1024, 1024],
-        help="Shape [heigth, width] that all images will be cropped/padded to before Unet submission. Default = [1024,1024]",
+        help="Shape [heigth, width] that all images will be cropped/padded to before Unet submission. Default is [1024,1024].",
     )
 
     parser.add_argument(
         "--receptive_field",
         type=int,
         default=128,
-        help="Receptive field of an neuron in the deepest layer.Default = 128",
+        help="Receptive field of an neuron in the deepest layer.Default is 128.",
     )
 
     parser.add_argument(
         "--log_frequency",
         type=int,
         default=50,
-        help="Log performance metrics every N gradient steps during training. Default = 50.",
+        help="Log performance metrics every N gradient steps during training. Default is 50.",
     )
 
     parser.add_argument(
         "--loss_weight",
         type=float,
         default=1.0,
-        help="Weight of the foreground class compared to the background class for the binary cross entropy loss.",
+        help="Weight of the foreground class compared to the background class for the binary cross entropy loss. Default is 1.",
     )
 
     parser.add_argument(
@@ -340,7 +340,7 @@ def _args_inference():
     parser.add_argument(
         "--data",
         type=str,
-        help="Path to .csv file containing test image file paths.",
+        help="Path to CSV file containing test image file paths.",
     )
 
     parser.add_argument(
