@@ -13,8 +13,7 @@ Please cite [this paper](#citation) if you are using this code in your research.
   - [Testing](#testing)
   - [Predicting](#predicting)
     - [napari plugin](#napari-plugin)
-  - [Other resources](#other-resources)
-    - [image annotation tools](#image-annotation-tools)
+  - [image annotation tools](#image-annotation-tools)
   - [Troubleshooting & support](#troubleshooting-&-support)
   - [Citation](#citation)
 
@@ -206,19 +205,99 @@ We provide two trained models:
 | whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/cellseg.png" title="example whole cell segmentation" width="120px" align="center"> | Trained on a data set (link to data set) of 226 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
 
 ## Testing
+A trained U-Net can be tested with `cellseg_test`. `cellseg_test` returns predicted masks and performance
+metrics. `cellseg_test` can be called with the following arguments:
 
-modality | example | description | availability
+  - `--help`: show help message
+  - `--data`: Path to CSV file containing test image file paths. The CSV file must have the columns `bf` and
+    `--mask`. 
+  - `--model`: Path to checkpoint file of trained pl.LightningModule.
+  - `--suffix`: Suffix to append to all mask file names.
+  - `--output_base_dir`: Path to output directory.
+  - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". If multiple GPU IDs are provided,
+    only the first GPU will be used.
+
+Make sure to activate the virtual environment created during [installation](#installation) before calling
+`cellseg_test`.
+
+Consider the following example:
+```bash
+# start off in the cell_segmentation directory
+cd /path/to/directory/cell_segmentation
+
+# activate the virtual environment
+conda activate cellseg
+
+# generate CSV files for data
+python ./cellseg/preprocessing/generate_list.py \
+  --bf "/path/to/test_images/*.png" \
+  --mask "/path/to/test_masks/*.png" \
+  --prefix test \
+  --out /path/to/output_directory \
+
+# run testing
+cellseg_test \
+  --data /path/to/output_directory/test_files.csv \
+  --model /path/to/checkpoint/file.ckpt \
+  --suffix mask \
+  --output_base_dir /path/to/results/folder \
+  --devices 0 # predict with GPU 0\
+```
 
 ## Predicting
+A trained U-Net can used for predictions with `cellseg_predict`. `cellseg_predict` returns only predicted masks
+metrics and can be called with the following arguments:
+
+  - `--help`: show help message
+  - `--data`: Path to CSV file containing predict image file paths. The CSV file must have the columns `bf` and
+    `--mask`. 
+  - `--model`: Path to checkpoint file of trained pl.LightningModule.
+  - `--suffix`: Suffix to append to all mask file names.
+  - `--output_base_dir`: Path to output directory.
+  - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". If multiple GPU IDs are provided,
+    only the first GPU will be used.
+
+Make sure to activate the virtual environment created during [installation](#installation) before calling
+`cellseg_predict`.
+
+Consider the following example:
+```bash
+# start off in the cell_segmentation directory
+cd /path/to/directory/cell_segmentation
+
+# activate the virtual environment
+conda activate cellseg
+
+# generate CSV files for data
+python ./cellseg/preprocessing/generate_list.py \
+  --bf "/path/to/predict_images/*.png" \
+  --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for generate_list.py \
+  --prefix predict \
+  --out /path/to/output_directory \
+
+# run prediction
+cellseg_predict \
+  --data /path/to/output_directory/predict_files.csv \
+  --model /path/to/checkpoint/file.ckpt \
+  --suffix mask \
+  --output_base_dir /path/to/results/folder \
+  --devices 0 # predict with GPU 0\
+```
 
 ### napari plugin
+`cellseg_predict` is also accessible as a plug-in for `napari` (link to napari-hub page and github page). 
 
-## Other resources
+## Image annotation tools
+Available tools to annotate segmentations include:
 
-### Image annotation tools
+  - [napari](https://napari.org/stable/)
+  - [Labkit](https://imagej.net/plugins/labkit/) for [Fiji](https://imagej.net/software/fiji/downloads)
+  - [QuPath](https://qupath.github.io)
+  - [ilastik](https://www.ilastik.org)
 
 ## Troubleshooting & support
-
+In case you are experiencing issues with `cellseg` inform us via the [issue tracker](https://github.com/CSDGroup/cell_segmentation/issues).
+Before you submit an issue, check if it has been addressed in a previous issue.
 
 ## Citation
 t.b.d.
