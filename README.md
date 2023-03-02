@@ -198,10 +198,16 @@ The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1
     - `latest-epoch={EPOCH}-step={STEP}.ckpt`: model weights of the (currently) latest checkpoint
 
 ### Trained models
-We provide two trained models, one for segmenting nuclei in bright field images and for segmenting whole cells in
-bright field images. 
+We provide two trained models:
+
+| modality | image format | example image | availability |
+| :-- | :-: | :-: | :-- |
+| nucleus segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/images/nucseg.png" title="example nucleus segmentation" width="120px" align="center"> | *Versatile (fluorescent nuclei)* and *DSB 2018 (from StarDist 2D paper)* that were both trained on a [subset of the DSB 2018 nuclei segmentation challenge dataset](https://github.com/stardist/stardist/releases/download/0.1.0/dsb2018.zip). |
+| whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/images/cellseg.png" title="example whole cell segmentation" width="120px" align="center"> | *Versatile (H&E nuclei)* that was trained on images from the [MoNuSeg 2018 training data](https://monuseg.grand-challenge.org/Data/) and the [TNBC dataset from Naylor et al. (2018)](https://zenodo.org/record/1175282#.X6mwG9so-CN). |
 
 ## Testing
+
+modality | example | description | availability
 
 ## Predicting
 
