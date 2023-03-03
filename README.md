@@ -4,7 +4,7 @@
 
 # *CellSeg* - Overview
 This repository contains a `torch` implementation of U-Net ([Ronneberger et al., 2015](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)).
-We currently provide [pre-trained](#pretrained-models) models for segmenting nuclei and whole cells in bright field images.
+We provide [trained](#trained-models) models for segmenting nuclei and whole cells in bright field images.
 Please cite [this paper](#citation) if you are using this code in your research.
 
 ## Contents
@@ -35,19 +35,19 @@ how to use `git` and GitHub can be found [here](https://www.w3schools.com/git/de
     ```
 
 3) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). [Here](https://testdriven.io/blog/python-environments/)
-is a list of different python virtual environment tools. If you are using [anaconda](https://www.anaconda.com), you can use the following.
+is a list of different python virtual environment tools. E.g. create a new [conda](https://www.anaconda.com) environment 
 
     ```bash
     conda create -n cellseg python=3.8
     ```
 
-4) Activate your virtual environment, after it has been created.
+4) Activate your virtual environment
 
     ```bash
     conda activate cellseg
     ```
 
-5) Install `cell_segmentation`.
+5) Install `cell_segmentation`
 
     1) as a user
 
@@ -175,10 +175,10 @@ The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1
   - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
   - `metrics.csv`: contains all metrics tracked during training
     - `loss_step`: training loss (binary cross-entropy) per gradient step
-    - `epoch`: training epoch ID
-    - `step`: training gradient step ID
+    - `epoch`: training epoch
+    - `step`: training gradient step
     - `loss_val_step`: validation loss (binary cross-entropy) per validation mini-batch
-    - `f1_step`: [f1 score](https://www.biorxiv.org/content/10.1101/803205v2) per validation step
+    - `f1_step`: [f1 score](https://www.biorxiv.org/content/10.1101/803205v2) per validation mini-batch
     - `iou_step`: average of `iou_small_step` and `iou_big_step` per validation mini-batch
     - `iou_big_step`: [intersection over union](https://www.biorxiv.org/content/10.1101/803205v2) of objects with 
       \> 2000 px in size per validation mini-batch
@@ -194,16 +194,16 @@ The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1
     `--checkpoint` of `cellseg_train` or `--model` of `cellseg_test` and `cellseg_predict`.
     - `best-f1-epoch={EPOCH}-step={STEP}.ckpt`: model weights with the (currently) highest `f1_epoch`
     - `best-iou-epoch={EPOCH}-step={STEP}.ckpt`: model weights with the (currently) highest `iou_epoch`
-    - `best-loss-epoch={EPOCH}-step={STEP}.ckpt`: model weights with the (currently) lowerst `loss_val_epoch`
+    - `best-loss-epoch={EPOCH}-step={STEP}.ckpt`: model weights with the (currently) lowest `loss_val_epoch`
     - `latest-epoch={EPOCH}-step={STEP}.ckpt`: model weights of the (currently) latest checkpoint
 
 ### Trained models
-We provide two trained models:
+We provide trained models:
 
 | modality | image format | example image | description | availability |
 | :-- | :-: | :-: | :-: | :-- |
-| nucleus segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/nucseg.png" title="example nucleus segmentation" width="120px" align="center"> | Trained on a data set (link to data set) of 9849 images (~620k nuclei). | link to model weights (link to zenodo/model zoo) |
-| whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/cellseg.png" title="example whole cell segmentation" width="120px" align="center"> | Trained on a data set (link to data set) of 226 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
+| nucleus segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/nucseg.png" title="example nucleus segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 9849 images (~620k nuclei). | link to model weights (link to zenodo/model zoo) |
+| whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/cellseg.png" title="example whole cell segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 226 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
 
 ## Testing
 A trained U-Net can be tested with `cellseg_test`. `cellseg_test` returns predicted masks and performance
@@ -212,7 +212,7 @@ metrics. `cellseg_test` can be called with the following arguments:
   - `--help`: show help message
   - `--data`: Path to CSV file containing test image file paths. The CSV file must have the columns `bf` and
     `--mask`. 
-  - `--model`: Path to checkpoint file of trained pl.LightningModule.
+  - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
   - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". If multiple GPU IDs are provided,
@@ -229,7 +229,7 @@ cd /path/to/directory/cell_segmentation
 # activate the virtual environment
 conda activate cellseg
 
-# generate CSV files for data
+# generate CSV file for data
 python ./cellseg/preprocessing/generate_list.py \
   --bf "/path/to/test_images/*.png" \
   --mask "/path/to/test_masks/*.png" \
@@ -245,6 +245,14 @@ cellseg_test \
   --devices 0 # predict with GPU 0\
 ```
 
+The output of `cellseg_test` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
+`--output_base_dir`. Its contents are:
+
+  - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
+  - `metrics.csv`: contains all metrics tracked during testing. Column IDs are identical to `metrics.csv` during
+    [training](#training)
+  - `test_masks`: directory containing segmentation masks obtained from U-Net
+
 ## Predicting
 A trained U-Net can used for predictions with `cellseg_predict`. `cellseg_predict` returns only predicted masks
 metrics and can be called with the following arguments:
@@ -252,7 +260,7 @@ metrics and can be called with the following arguments:
   - `--help`: show help message
   - `--data`: Path to CSV file containing predict image file paths. The CSV file must have the columns `bf` and
     `--mask`. 
-  - `--model`: Path to checkpoint file of trained pl.LightningModule.
+  - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
   - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". If multiple GPU IDs are provided,
@@ -269,7 +277,7 @@ cd /path/to/directory/cell_segmentation
 # activate the virtual environment
 conda activate cellseg
 
-# generate CSV files for data
+# generate CSV file for data
 python ./cellseg/preprocessing/generate_list.py \
   --bf "/path/to/predict_images/*.png" \
   --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for generate_list.py \
@@ -285,8 +293,14 @@ cellseg_predict \
   --devices 0 # predict with GPU 0\
 ```
 
+The output of `cellseg_predict` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
+`--output_base_dir`. Its contents are:
+
+  - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
+  - `predicted_masks`: directory containing segmentation masks obtained from U-Net
+
 ### napari plugin
-`cellseg_predict` is also accessible as a plug-in for `napari` (link to napari-hub page and github page). 
+`cellseg_predict` is also available as a plug-in for `napari` (link to napari-hub page and github page). 
 
 ## Image annotation tools
 Available tools to annotate segmentations include:
