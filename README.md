@@ -21,11 +21,11 @@ Please cite [this paper](#citation) if you are using this code in your research.
 ## Installation
 Installation requires a command line application (e.g. `Terminal`) with [`git` installed](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 If you operate on `Windows` we recommend using [`Ubuntu on Windows`](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview).
-Alternatively, you can install [`anaconda`](https://docs.anaconda.com/anaconda/user-guide/getting-started/) and
+Alternatively, you can install [`Anaconda`](https://docs.anaconda.com/anaconda/user-guide/getting-started/) and
 use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found [here](https://www.w3schools.com/git/default.asp?remote=github).
 
 1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). [Here](https://testdriven.io/blog/python-environments/)
-is a list of different python virtual environment tools. E.g. create a new [conda](https://www.anaconda.com) environment.
+is a list of different python virtual environment tools. E.g. create a new `conda` environment.
 Open your command line application and
 
     ```bash
