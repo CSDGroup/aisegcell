@@ -19,35 +19,44 @@ Please cite [this paper](#citation) if you are using this code in your research.
   - [Citation](#citation)
 
 ## Installation
-Make sure you have [`git` installed](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). A introductory tutorial on
-how to use `git` and GitHub can be found [here](https://www.w3schools.com/git/default.asp?remote=github).
+Installation requires a command line application (e.g. `Terminal`) with [`git` installed](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+If you operate on `Windows` we recommend using [`Ubuntu on Windows`](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview).
+Alternatively, you can install [`anaconda`](https://docs.anaconda.com/anaconda/user-guide/getting-started/) and
+use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found [here](https://www.w3schools.com/git/default.asp?remote=github).
 
-1) clone the repository (consider `ssh` alternative)
-
-    ```bash
-    git clone https://github.com/dsethz/cell_segmentation.git
-    ```
-
-2) Navigate to the cloned directory
-
-    ```bash
-    cd cell_segmentation
-    ```
-
-3) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). [Here](https://testdriven.io/blog/python-environments/)
-is a list of different python virtual environment tools. E.g. create a new [conda](https://www.anaconda.com) environment 
+1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). [Here](https://testdriven.io/blog/python-environments/)
+is a list of different python virtual environment tools. E.g. create a new [conda](https://www.anaconda.com) environment.
+Open your command line application and
 
     ```bash
     conda create -n cellseg python=3.8
     ```
 
-4) Activate your virtual environment
+2) Activate your virtual environment
 
     ```bash
     conda activate cellseg
     ```
 
-5) Install `cell_segmentation`
+3) (Optional, `Windows` only) If you use `Anaconda Powershell Prompt`, install `git` 
+
+    ```bash
+    conda install -c anaconda git
+    ```
+
+4) clone the repository (consider `ssh` alternative)
+
+    ```bash
+    git clone https://github.com/dsethz/cell_segmentation.git
+    ```
+
+5) Navigate to the cloned directory
+
+    ```bash
+    cd cell_segmentation
+    ```
+
+6) Install `cell_segmentation`
 
     1) as a user
 
@@ -61,12 +70,12 @@ is a list of different python virtual environment tools. E.g. create a new [cond
         pre-commit install
         ```
 
-6) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for 
+7) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for 
 `Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible ([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
  [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and 
  update their drivers if necessary.
 
-7) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. `cell_segmentation` was
+8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. `cell_segmentation` was
 tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version `11.3.1`. Depending on
 your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change:
 
@@ -82,7 +91,7 @@ pip install torch==1.10.2 torchvision==0.11.3
 
 ```
 
-8) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `cell_segmentation` was tested with version `1.5.9`.
+9) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `cell_segmentation` was tested with version `1.5.9`.
 
 ```bash
 # note the installation of v1.5.9 does not use pip install lightning
