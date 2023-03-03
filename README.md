@@ -149,7 +149,7 @@ python ./cellseg/preprocessing/generate_list.py \
   --prefix val \
   --out /path/to/output_directory \
 
-# starting new training
+# starting multi-GPU training
 cellseg_train \
   --data /path/to/output_directory/train_files.csv \
   --data_val /path/to/output_directory/val_files.csv \
@@ -165,17 +165,17 @@ cellseg_train \
   --log_frequency 5 \
   --loss_weight 1 \
   --bilinear  \
-  --multiprocessing \
+  --multiprocessing # required if you use multiple --devices \
   --transform_intensity \
   --seed 123 \
 
-# OR retrain an existing checkpoint
+# OR retrain an existing checkpoint with single GPU
 cellseg_train \
   --data /path/to/output_directory/train_files.csv \
   --data_val /path/to/output_directory/val_files.csv \
   --model Unet \
   --checkpoint /path/to/checkpoint/file.ckpt
-  --devices 2,4 # use GPU 2 and 4 \
+  --devices 0 \
   --output_base_dir /path/to/results/folder \
   --epochs 10 \
   --batch_size 8 \
@@ -186,7 +186,6 @@ cellseg_train \
   --log_frequency 5 \
   --loss_weight 1 \
   --bilinear  \
-  --multiprocessing \
   --transform_intensity \
   --seed 123 \
 
