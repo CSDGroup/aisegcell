@@ -107,8 +107,8 @@ pip install pytorch-lightning==1.5.9
 
 
 ## Training
-Training U-Net is as simple as calling the command `cellseg_train`. `cellseg_train` can be called with the
-following arguments:
+Training U-Net is as simple as calling the command `cellseg_train`. `cellseg_train` is available if you activate
+the virtual environment you [installed](#installation) and can be called with the following arguments:
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing training image file paths. The CSV file must have the columns `bf` and
@@ -132,9 +132,6 @@ following arguments:
   - `--retrain`: If flag is used, best scores for model saving will be reset (required for training on new data).
   - `--transform_intensity`: If flag is used random intensity transformations will be applied to input images.
   - `--seed`: None or Int to use for random seeding.
-
-Make sure to activate the virtual environment created during [installation](#installation) before calling
-`cellseg_train`.
 
 The script `./cellseg/preprocessing/generate_list.py` can be used to write CSV files for `--data` and `--data_val` and 
 has the following arguments:
@@ -204,7 +201,6 @@ cellseg_train \
   --bilinear  \
   --transform_intensity \
   --seed 123 \
-
 ```
 
 The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
