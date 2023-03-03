@@ -61,11 +61,34 @@ is a list of different python virtual environment tools. E.g. create a new [cond
         pre-commit install
         ```
 
-6) [Install `torch`/`torchvision`](https://pytorch.org/get-started/locally/) compatible with your system. `cell_segmentation` was
-tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version `11.3.1`.
+6) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `Windows` and `Linux`
+(for `torch` version `1.10.2`). Check if your `GPU`(s) are CUDA compatible ([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
+ [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and
+ update their drivers.
 
-7) [Install `pytorch-lightning`](https://www.pytorchlightning.ai) compatible with your system. cell_segmentation
-was tested with version `1.5.9`.
+7) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. `cell_segmentation` was
+tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version `11.3.1`. Depending on
+your OS, your CPU or GPU (and CUDA version) the installation may change:
+
+```bash
+# Windows/Linux CPU
+pip install torch==1.10.2+cpu torchvision==0.11.3+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+
+# Windows/Linux GPU (CUDA 11.3.1)
+pip install torch==1.10.2+cu113 torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+
+# macOS CPU
+pip install torch==1.10.2 torchvision==0.11.3
+
+```
+
+8) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `cell_segmentation` was tested with version `1.5.9`.
+
+```bash
+# note the installation of v1.5.9 does not use pip install lightning
+pip install pytorch-lightning==1.5.9
+```
+
 
 ## Training
 Training U-Net is as simple as calling the command `cellseg_train`. `cellseg_train` can be called with the
