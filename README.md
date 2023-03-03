@@ -136,8 +136,8 @@ the virtual environment you [installed](#installation) and can be called with th
 The script `./cellseg/preprocessing/generate_list.py` can be used to write CSV files for `--data` and `--data_val` and 
 has the following arguments:
   - `--help`: show help message
-  - `--bf`: Path ([`glob`](https://docs.python.org/3/library/glob.html) pattern) to bright field images. Naming convention must match naming convention of `--mask`.
-  - `--mask`: Path (`glob` pattern) to segmentation masks.
+  - `--bf`: Path ([`glob`](https://docs.python.org/3/library/glob.html) pattern) to input images (e.g. bright field). Naming convention must match naming convention of `--mask`.
+  - `--mask`: Path (`glob` pattern) to segmentation masks corresponding to `--bf`.
   - `--prefix`: Prefix for output file name (i.e. `{PREFIX}_files.csv`).
   - `--out`: Directory to which output file is saved.
 
@@ -151,8 +151,8 @@ conda activate cellseg
 
 # generate CSV files for data and data_val
 python ./cellseg/preprocessing/generate_list.py \
-  --bf "/path/to/train_images/*.png" \
-  --mask "/path/to/train_masks/*.png" \
+  --bf "/path/to/train_images/*/*.png" # e.g. select all PNG files in all sub-directories of /path/to/train_images\
+  --mask "/path/to/train_masks/*/*.png" \
   --prefix train \
   --out /path/to/output_directory \
 
