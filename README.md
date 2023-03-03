@@ -25,8 +25,8 @@ Alternatively, you can install [`Anaconda`](https://docs.anaconda.com/anaconda/u
 use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found [here](https://www.w3schools.com/git/default.asp?remote=github).
 
 1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). [Here](https://testdriven.io/blog/python-environments/)
-is a list of different python virtual environment tools. E.g. create a new `conda` environment.
-Open your command line application and
+is a list of different python virtual environment tools. Open your command line application and create a 
+(e.g. `conda`) virtual environment
 
     ```bash
     conda create -n cellseg python=3.8
@@ -38,7 +38,7 @@ Open your command line application and
     conda activate cellseg
     ```
 
-3) (Optional, `Windows` only) If you use `Anaconda Powershell Prompt`, install `git` 
+3) (Optional) If you use `Anaconda Powershell Prompt`, install `git` through `conda`
 
     ```bash
     conda install -c anaconda git
@@ -47,6 +47,9 @@ Open your command line application and
 4) clone the repository (consider `ssh` alternative)
 
     ```bash
+    # change directory
+    cd /path/to/directory/to/clone/repository/to
+
     git clone https://github.com/dsethz/cell_segmentation.git
     ```
 
@@ -77,7 +80,7 @@ Open your command line application and
 
 8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. `cell_segmentation` was
 tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version `11.3.1`. Depending on
-your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change:
+your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
 ```bash
 # Windows/Linux CPU
