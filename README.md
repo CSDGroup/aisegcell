@@ -60,6 +60,10 @@ is a list of different python virtual environment tools. Open your command line 
     ```
 
 6) Install `cell_segmentation`
+    ```bash
+    # update pip
+    pip install -U pip
+    ```
 
     1) as a user
 
