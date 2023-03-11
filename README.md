@@ -50,7 +50,7 @@ is a list of different python virtual environment tools. Open your command line 
     # change directory
     cd /path/to/directory/to/clone/repository/to
 
-    git clone https://github.com/dsethz/cell_segmentation.git
+    git clone https://github.com/CSDGroup/cell_segmentation.git
     ```
 
 5) Navigate to the cloned directory
