@@ -62,12 +62,12 @@ def test_iou_to_f1():
     results = iou_to_f1(t_min=0.1, t_max=0.6, IOUs=IOU)
     results_expected = {
         "f1": torch.FloatTensor([2 / (5 + 1e-9)]),
-        "tp": torch.tensor([1], dtype=torch.int32),
-        "fp": torch.tensor([1], dtype=torch.int32),
-        "fn": torch.tensor([1], dtype=torch.int32),
-        "splits": torch.tensor([1], dtype=torch.int32),
-        "merges": torch.tensor([1], dtype=torch.int32),
-        "inaccurate_masks": torch.tensor([1], dtype=torch.int32),
+        "tp": torch.FloatTensor([1]),
+        "fp": torch.FloatTensor([1]),
+        "fn": torch.FloatTensor([1]),
+        "splits": torch.FloatTensor([1]),
+        "merges": torch.FloatTensor([1]),
+        "inaccurate_masks": torch.FloatTensor([1]),
     }
 
     assert torch.isclose(results["f1"], results_expected["f1"])

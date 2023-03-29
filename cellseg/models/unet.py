@@ -426,7 +426,7 @@ class LitUnet(pl.LightningModule):
         loss = F.binary_cross_entropy(masks_hat, masks, weight=weight)
         self.log("loss", loss, on_step=True, on_epoch=True, sync_dist=True)
 
-        return {"loss": loss, "masks_hat": masks_hat, "masks": masks}
+        return {"loss": loss, "masks_hat": masks_hat.detach(), "masks": masks}
 
     def validation_step(
         self, batch: List[torch.Tensor], batch_idx: int

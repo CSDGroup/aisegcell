@@ -169,12 +169,12 @@ def iou_to_f1(
 
     scores = {
         "f1": torch.FloatTensor(f1),
-        "tp": torch.tensor(tp, dtype=torch.int32),
-        "fp": torch.tensor(fp, dtype=torch.int32),
-        "fn": torch.tensor(fn, dtype=torch.int32),
-        "splits": torch.tensor(splits, dtype=torch.int32),
-        "merges": torch.tensor(merges, dtype=torch.int32),
-        "inaccurate_masks": torch.tensor(inaccurate_masks, dtype=torch.int32),
+        "tp": torch.FloatTensor(tp),
+        "fp": torch.FloatTensor(fp),
+        "fn": torch.FloatTensor(fn),
+        "splits": torch.FloatTensor(splits),
+        "merges": torch.FloatTensor(merges),
+        "inaccurate_masks": torch.FloatTensor(inaccurate_masks),
     }
 
     return scores

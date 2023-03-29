@@ -138,7 +138,7 @@ has the following arguments:
   - `--help`: show help message
   - `--bf`: Path ([`glob`](https://docs.python.org/3/library/glob.html) pattern) to input images (e.g. bright field). Naming convention must match naming convention of `--mask`.
   - `--mask`: Path (`glob` pattern) to segmentation masks corresponding to `--bf`.
-  - `--prefix`: Prefix for output file name (i.e. `{PREFIX}_files.csv`).
+  - `--prefix`: Prefix for output file name (i.e. `{PREFIX}_paths.csv`).
   - `--out`: Directory to which output file is saved.
 
 Consider the following example:
@@ -154,18 +154,18 @@ python ./cellseg/preprocessing/generate_list.py \
   --bf "/path/to/train_images/*/*.png" # e.g. select all PNG files in all sub-directories of /path/to/train_images\
   --mask "/path/to/train_masks/*/*.png" \
   --prefix train \
-  --out /path/to/output_directory \
+  --out /path/to/output_directory
 
 python ./cellseg/preprocessing/generate_list.py \
   --bf "/path/to/val_images/*.png" \
   --mask "/path/to/val_masks/*.png" \
   --prefix val \
-  --out /path/to/output_directory \
+  --out /path/to/output_directory
 
 # starting multi-GPU training
 cellseg_train \
-  --data /path/to/output_directory/train_files.csv \
-  --data_val /path/to/output_directory/val_files.csv \
+  --data /path/to/output_directory/train_paths.csv \
+  --data_val /path/to/output_directory/val_paths.csv \
   --model Unet \
   --devices 2,4 # use GPU 2 and 4 \
   --output_base_dir /path/to/results/folder \
@@ -173,19 +173,19 @@ cellseg_train \
   --batch_size 8 \
   --lr 1e-3 \
   --base_filters 32 \
-  --shape 1024,1024 \
+  --shape 1024 1024 \
   --receptive_field 128 \
   --log_frequency 5 \
   --loss_weight 1 \
   --bilinear  \
   --multiprocessing # required if you use multiple --devices \
   --transform_intensity \
-  --seed 123 \
+  --seed 123
 
 # OR retrain an existing checkpoint with single GPU
 cellseg_train \
-  --data /path/to/output_directory/train_files.csv \
-  --data_val /path/to/output_directory/val_files.csv \
+  --data /path/to/output_directory/train_paths.csv \
+  --data_val /path/to/output_directory/val_paths.csv \
   --model Unet \
   --checkpoint /path/to/checkpoint/file.ckpt
   --devices 0 \
@@ -194,13 +194,13 @@ cellseg_train \
   --batch_size 8 \
   --lr 1e-3 \
   --base_filters 32 \
-  --shape 1024,1024 \
+  --shape 1024 1024 \
   --receptive_field 128 \
   --log_frequency 5 \
   --loss_weight 1 \
   --bilinear  \
   --transform_intensity \
-  --seed 123 \
+  --seed 123
 ```
 
 The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
@@ -268,18 +268,18 @@ python ./cellseg/preprocessing/generate_list.py \
   --bf "/path/to/test_images/*.png" \
   --mask "/path/to/test_masks/*.png" \
   --prefix test \
-  --out /path/to/output_directory \
+  --out /path/to/output_directory
 
 # run testing
 cellseg_test \
-  --data /path/to/output_directory/test_files.csv \
+  --data /path/to/output_directory/test_paths.csv \
   --model /path/to/checkpoint/file.ckpt \
   --suffix mask \
   --output_base_dir /path/to/results/folder \
-  --devices 0 # predict with GPU 0\
+  --devices 0 # predict with GPU 0
 ```
 
-The output of `cellseg_test` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
+The output of `cellseg_test` will be stored in subdirectories `lightning_logs/version_{ID}/` at
 `--output_base_dir`. Its contents are:
 
   - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
@@ -316,18 +316,18 @@ python ./cellseg/preprocessing/generate_list.py \
   --bf "/path/to/predict_images/*.png" \
   --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for generate_list.py \
   --prefix predict \
-  --out /path/to/output_directory \
+  --out /path/to/output_directory
 
 # run prediction
 cellseg_predict \
-  --data /path/to/output_directory/predict_files.csv \
+  --data /path/to/output_directory/predict_paths.csv \
   --model /path/to/checkpoint/file.ckpt \
   --suffix mask \
   --output_base_dir /path/to/results/folder \
-  --devices 0 # predict with GPU 0\
+  --devices 0 # predict with GPU 0
 ```
 
-The output of `cellseg_predict` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
+The output of `cellseg_predict` will be stored in subdirectories `lightning_logs/version_{ID}/` at
 `--output_base_dir`. Its contents are:
 
   - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
