@@ -34,13 +34,22 @@ def train():
     parser.add_argument(
         "--data",
         type=str,
+        required=True,
         help="Path to CSV file containing training image file paths.",
     )
 
     parser.add_argument(
         "--data_val",
         type=str,
+        required=True,
         help="Path to CSV file containing validation image file paths.",
+    )
+
+    parser.add_argument(
+        "--output_base_dir",
+        type=str,
+        required=True,
+        help="Path to output directory.",
     )
 
     parser.add_argument(
@@ -63,13 +72,6 @@ def train():
         nargs="+",
         default=["0"],
         help='Devices to use for model training. Can be GPU IDs as in default or "cpu".',
-    )
-
-    parser.add_argument(
-        "--output_base_dir",
-        type=str,
-        default="C:/Users/melin/OneDrive/Dokumente/Master/4.Semester/Lab_rotations/CSD_group/output",
-        help="Path to output directory.",
     )
 
     parser.add_argument(
@@ -340,13 +342,22 @@ def _args_inference():
     parser.add_argument(
         "--data",
         type=str,
+        required=True,
         help="Path to CSV file containing test image file paths.",
     )
 
     parser.add_argument(
         "--model",
         type=str,
+        required=True,
         help="Path to checkpoint file of trained pl.LightningModule.",
+    )
+
+    parser.add_argument(
+        "--output_base_dir",
+        type=str,
+        required=True,
+        help="Path to output directory.",
     )
 
     parser.add_argument(
@@ -354,12 +365,6 @@ def _args_inference():
         type=str,
         default="",
         help="Suffix to append to all mask file names.",
-    )
-
-    parser.add_argument(
-        "--output_base_dir",
-        type=str,
-        help="Path to output directory.",
     )
 
     parser.add_argument(
