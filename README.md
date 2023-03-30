@@ -146,9 +146,6 @@ has the following arguments:
 
 Consider the following example:
 ```bash
-# start off in the cell_segmentation directory
-cd /path/to/directory/cell_segmentation
-
 # activate the virtual environment
 conda activate cellseg
 
@@ -260,9 +257,6 @@ Make sure to activate the virtual environment created during [installation](#ins
 
 Consider the following example:
 ```bash
-# start off in the cell_segmentation directory
-cd /path/to/directory/cell_segmentation
-
 # activate the virtual environment
 conda activate cellseg
 
@@ -308,9 +302,6 @@ Make sure to activate the virtual environment created during [installation](#ins
 
 Consider the following example:
 ```bash
-# start off in the cell_segmentation directory
-cd /path/to/directory/cell_segmentation
-
 # activate the virtual environment
 conda activate cellseg
 
