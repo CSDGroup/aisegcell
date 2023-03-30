@@ -63,7 +63,7 @@ def train():
         "--checkpoint",
         type=str,
         default=None,
-        help="Path to checkpoint file of trained pl.LightningModule.",
+        help="Path to checkpoint file of trained pl.LightningModule. Default is None.",
     )
 
     parser.add_argument(
@@ -71,7 +71,7 @@ def train():
         type=str,
         nargs="+",
         default=["0"],
-        help='Devices to use for model training. Can be GPU IDs as in default or "cpu".',
+        help='Devices to use for model training. Can be GPU IDs as in default or "cpu". Default is 0.',
     )
 
     parser.add_argument(
@@ -160,7 +160,7 @@ def train():
         "--seed",
         type=int,
         default=None,
-        help="None or Int to use for random seeding.",
+        help="None or Int to use for random seeding. Default is None.",
     )
 
     args = parser.parse_args()
@@ -185,6 +185,8 @@ def train():
     transform_intensity = args.transform_intensity
     seed = args.seed
     loss_weight = args.loss_weight
+
+    assert min(shape) >= receptive_field, "min(shape) >= receptive_field is required."
 
     # create directories
     d = date.today()

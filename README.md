@@ -112,26 +112,29 @@ the virtual environment you [installed](#installation) and can be called with th
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing training image file paths. The CSV file must have the columns `bf` and
-    `--mask`. 
+    `mask`. 
   - `--data_val`: Path to CSV file containing validation image file paths (same format as `--data`).
+  - `--output_base_dir`: Path to output directory.
   - `--model`: Model type to train (currently only U-Net). Default is "Unet".
   - `--checkpoint`: Path to checkpoint file matching `--model`. Only necessary if continuing a model training.
+    Default is `None`.
   - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". Multiple GPU IDs have to be listed
-    separated by comma (e.g. `2,5`).
-  - `--output_base_dir`: Path to output directory.
+    separated by spacebar (e.g. `2 5 9`). Default is 0 (GPU with ID 0).
   - `--epochs`: Number of training epochs. Default is 5.
   - `--batch_size`: Number of samples per mini-batch. Default is 2.
   - `--lr`: Learning rate of the optimizer. Default is 1e-4.
   - `--base_filters`: Number of base_filters of Unet. Default is 32.
-  - `--shape`: Shape [heigth, width] that all images will be cropped/padded to before model submission. Default is [1024,1024].
+  - `--shape`: Shape [heigth, width] that all images will be cropped/padded to before model submission. Height
+    and width cannot be smaller than `--receptive_field`. Default is [1024,1024].
   - `--receptive_field` Receptive field of a neuron in the deepest layer. Default is 128.
   - `--log_frequency`: Log performance metrics every N gradient steps during training. Default is 50.
   - `--loss_weight`: Weight of the foreground class compared to the background class for the binary cross entropy loss.
+    Default is 1.
   - `--bilinear`: If flag is used, use bilinear upsampling, else transposed convolutions.
   - `--multiprocessing`: If flag is used, all GPUs given in devices will be used for traininig. Does not support CPU.
   - `--retrain`: If flag is used, best scores for model saving will be reset (required for training on new data).
   - `--transform_intensity`: If flag is used random intensity transformations will be applied to input images.
-  - `--seed`: None or Int to use for random seeding.
+  - `--seed`: None or Int to use for random seeding. Default is `None`.
 
 The command `cellseg_generate_list` can be used to write CSV files for `--data` and `--data_val` and 
 has the following arguments:
@@ -173,7 +176,7 @@ cellseg_train \
   --batch_size 8 \
   --lr 1e-3 \
   --base_filters 32 \
-  --shape 1024 1024 \
+  --shape 1024 512 \
   --receptive_field 128 \
   --log_frequency 5 \
   --loss_weight 1 \
