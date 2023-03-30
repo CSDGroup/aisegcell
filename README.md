@@ -133,7 +133,7 @@ the virtual environment you [installed](#installation) and can be called with th
   - `--transform_intensity`: If flag is used random intensity transformations will be applied to input images.
   - `--seed`: None or Int to use for random seeding.
 
-The script `./cellseg/preprocessing/generate_list.py` can be used to write CSV files for `--data` and `--data_val` and 
+The command `cellseg_generate_list` can be used to write CSV files for `--data` and `--data_val` and 
 has the following arguments:
   - `--help`: show help message
   - `--bf`: Path ([`glob`](https://docs.python.org/3/library/glob.html) pattern) to input images (e.g. bright field). Naming convention must match naming convention of `--mask`.
@@ -150,13 +150,13 @@ cd /path/to/directory/cell_segmentation
 conda activate cellseg
 
 # generate CSV files for data and data_val
-python ./cellseg/preprocessing/generate_list.py \
+cellseg_generate_list \
   --bf "/path/to/train_images/*/*.png" # e.g. select all PNG files in all sub-directories of /path/to/train_images\
   --mask "/path/to/train_masks/*/*.png" \
   --prefix train \
   --out /path/to/output_directory
 
-python ./cellseg/preprocessing/generate_list.py \
+cellseg_generate_list \
   --bf "/path/to/val_images/*.png" \
   --mask "/path/to/val_masks/*.png" \
   --prefix val \
@@ -264,7 +264,7 @@ cd /path/to/directory/cell_segmentation
 conda activate cellseg
 
 # generate CSV file for data
-python ./cellseg/preprocessing/generate_list.py \
+cellseg_generate_list \
   --bf "/path/to/test_images/*.png" \
   --mask "/path/to/test_masks/*.png" \
   --prefix test \
@@ -312,9 +312,9 @@ cd /path/to/directory/cell_segmentation
 conda activate cellseg
 
 # generate CSV file for data
-python ./cellseg/preprocessing/generate_list.py \
+cellseg_generate_list \
   --bf "/path/to/predict_images/*.png" \
-  --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for generate_list.py \
+  --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for cellseg_generate_list \
   --prefix predict \
   --out /path/to/output_directory
 

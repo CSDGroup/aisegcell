@@ -36,30 +36,44 @@ def arg_parse():
     parser.add_argument(
         "--bf",
         type=str,
-        default="T:/TimelapseData/180619AW12/*/*w00.png",
-        help="Path (glob pattern) to bright field images. Naming convention must match naming "
-        "naming convention of mask s.t. sort results in matching paths in each row.",
+        required=True,
+        help="Path (glob pattern, e.g. 'C:/path/to/images/*.png') to bright field images. Naming convention must match "
+        "naming convention of --mask s.t. alphanumerically sorted paths are matching.",
     )
 
     parser.add_argument(
         "--mask",
         type=str,
-        default="T:/TimelapseData/180619AW12/Analysis/Segmentation_201106/*/*.png",
-        help="Path (glob pattern) to segmentation masks.",
-    )
-
-    parser.add_argument(
-        "--prefix", type=str, default="201201SK30", help="Prefix for output file name."
+        required=True,
+        help="Path (glob pattern, e.g. 'C:/path/to/masks/*.png') to segmentation masks.",
     )
 
     parser.add_argument(
         "--out",
         type=str,
-        default="C:/Users/schidani/Desktop/",
+        required=True,
         help="Path to output directory.",
     )
 
+    parser.add_argument(
+        "--prefix",
+        type=str,
+        default="train",
+        help="Prefix for output file name (i.e. '{prefix}_paths.csv').",
+    )
+
     return parser.parse_args()
+
+
+def _generate_df(path_bf: str, path_mask: str) -> pd.DataFrame:
+    files_bf = glob.glob(path_bf)
+    files_bf.sort()
+    files_mask = glob.glob(path_mask)
+    files_mask.sort()
+
+    df = pd.DataFrame({"bf": files_bf, "mask": files_mask})
+
+    return df
 
 
 def main():
@@ -68,15 +82,11 @@ def main():
     path_bf = args.bf
     path_mask = args.mask
     prefix = args.prefix
-    out_path = args.out
+    path_out = args.out
 
-    files_bf = glob.glob(path_bf)
-    files_bf.sort()
-    files_mask = glob.glob(path_mask)
-    files_mask.sort()
-
-    df = pd.DataFrame({"bf": files_bf, "mask": files_mask})
-    df.to_csv(os.path.join(out_path, f"{prefix}_paths.csv"), index=None)
+    df = _generate_df(path_bf, path_mask)
+    os.makedirs(path_out, exist_ok=True)
+    df.to_csv(os.path.join(path_out, f"{prefix}_paths.csv"), index=None)
 
 
 if __name__ == "__main__":
