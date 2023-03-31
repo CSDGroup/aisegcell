@@ -118,8 +118,9 @@ the virtual environment you [installed](#installation) and can be called with th
   - `--model`: Model type to train (currently only U-Net). Default is "Unet".
   - `--checkpoint`: Path to checkpoint file matching `--model`. Only necessary if continuing a model training.
     Default is `None`.
-  - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". Multiple GPU IDs have to be listed
-    separated by spacebar (e.g. `2 5 9`). Default is 0 (GPU with ID 0).
+  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs. 
+    Multiple GPU IDs have to be listed separated by spacebar (e.g. `2 5 9`). If you want to use the CPU you have
+    to use "cpu". Default is "cpu".
   - `--epochs`: Number of training epochs. Default is 5.
   - `--batch_size`: Number of samples per mini-batch. Default is 2.
   - `--lr`: Learning rate of the optimizer. Default is 1e-4.
@@ -141,8 +142,8 @@ has the following arguments:
   - `--help`: show help message
   - `--bf`: Path ([`glob`](https://docs.python.org/3/library/glob.html) pattern) to input images (e.g. bright field). Naming convention must match naming convention of `--mask`.
   - `--mask`: Path (`glob` pattern) to segmentation masks corresponding to `--bf`.
-  - `--prefix`: Prefix for output file name (i.e. `{PREFIX}_paths.csv`).
   - `--out`: Directory to which output file is saved.
+  - `--prefix`: Prefix for output file name (i.e. `{PREFIX}_paths.csv`). Default is "train".
 
 Consider the following example:
 ```bash
@@ -153,14 +154,14 @@ conda activate cellseg
 cellseg_generate_list \
   --bf "/path/to/train_images/*/*.png" # e.g. select all PNG files in all sub-directories of /path/to/train_images\
   --mask "/path/to/train_masks/*/*.png" \
-  --prefix train \
   --out /path/to/output_directory
+  --prefix train \
 
 cellseg_generate_list \
   --bf "/path/to/val_images/*.png" \
   --mask "/path/to/val_masks/*.png" \
-  --prefix val \
   --out /path/to/output_directory
+  --prefix val \
 
 # starting multi-GPU training
 cellseg_train \
@@ -249,8 +250,9 @@ metrics. `cellseg_test` can be called with the following arguments:
   - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
-  - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". If multiple GPU IDs are provided,
-    only the first GPU will be used.
+  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs. 
+    Multiple GPU IDs have to be listed separated by spacebar (e.g. `2 5 9`). If multiple GPUs are provided only
+    the first ID will be used. If you want to use the CPU you have to use "cpu". Default is "cpu".
 
 Make sure to activate the virtual environment created during [installation](#installation) before calling
 `cellseg_test`.
@@ -264,8 +266,8 @@ conda activate cellseg
 cellseg_generate_list \
   --bf "/path/to/test_images/*.png" \
   --mask "/path/to/test_masks/*.png" \
-  --prefix test \
   --out /path/to/output_directory
+  --prefix test \
 
 # run testing
 cellseg_test \
@@ -294,8 +296,9 @@ metrics and can be called with the following arguments:
   - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
-  - `--devices`: Devices to use for model training. Can be GPU IDs or "cpu". If multiple GPU IDs are provided,
-    only the first GPU will be used.
+  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs. 
+    Multiple GPU IDs have to be listed separated by spacebar (e.g. `2 5 9`). If multiple GPUs are provided only
+    the first ID will be used. If you want to use the CPU you have to use "cpu". Default is "cpu".
 
 Make sure to activate the virtual environment created during [installation](#installation) before calling
 `cellseg_predict`.
@@ -309,8 +312,8 @@ conda activate cellseg
 cellseg_generate_list \
   --bf "/path/to/predict_images/*.png" \
   --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for cellseg_generate_list \
-  --prefix predict \
   --out /path/to/output_directory
+  --prefix predict \
 
 # run prediction
 cellseg_predict \

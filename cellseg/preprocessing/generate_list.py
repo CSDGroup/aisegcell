@@ -59,7 +59,7 @@ def arg_parse():
         "--prefix",
         type=str,
         default="train",
-        help="Prefix for output file name (i.e. '{prefix}_paths.csv').",
+        help="Prefix for output file name (i.e. '{prefix}_paths.csv'). Default is 'train'.",
     )
 
     return parser.parse_args()

@@ -70,8 +70,8 @@ def train():
         "--devices",
         type=str,
         nargs="+",
-        default=["0"],
-        help='Devices to use for model training. Can be GPU IDs as in default or "cpu". Default is 0.',
+        default=["cpu"],
+        help='Devices to use for model training. Can be GPU IDs as in default or "cpu". Default is "cpu".',
     )
 
     parser.add_argument(
