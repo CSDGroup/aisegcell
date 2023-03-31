@@ -145,6 +145,9 @@ has the following arguments:
   - `--out`: Directory to which output file is saved.
   - `--prefix`: Prefix for output file name (i.e. `{PREFIX}_paths.csv`). Default is "train".
 
+Use [wildcard characters](https://linuxhint.com/bash_wildcard_tutorial/) like `*` to select all files you want to
+input to `--bf` and `--mask` (see example below).
+
 Consider the following example:
 ```bash
 # activate the virtual environment
@@ -152,23 +155,23 @@ conda activate cellseg
 
 # generate CSV files for data and data_val
 cellseg_generate_list \
-  --bf "/path/to/train_images/*/*.png" # e.g. select all PNG files in all sub-directories of /path/to/train_images\
-  --mask "/path/to/train_masks/*/*.png" \
-  --out /path/to/output_directory
-  --prefix train \
+  --bf "/path/to/train_images/*/*.png" # i.e. select all PNG files in all sub-directories of /path/to/train_images\
+  --mask "/path/to/train_masks/*/*mask.png" # i.e. select all files in all sub-directories that end with "mask.png"\
+  --out /path/to/output_directory \
+  --prefix train
 
 cellseg_generate_list \
   --bf "/path/to/val_images/*.png" \
   --mask "/path/to/val_masks/*.png" \
-  --out /path/to/output_directory
-  --prefix val \
+  --out /path/to/output_directory \
+  --prefix val
 
 # starting multi-GPU training
 cellseg_train \
   --data /path/to/output_directory/train_paths.csv \
   --data_val /path/to/output_directory/val_paths.csv \
   --model Unet \
-  --devices 2,4 # use GPU 2 and 4 \
+  --devices 2 4 # use GPU 2 and 4 \
   --output_base_dir /path/to/results/folder \
   --epochs 10 \
   --batch_size 8 \
@@ -266,8 +269,8 @@ conda activate cellseg
 cellseg_generate_list \
   --bf "/path/to/test_images/*.png" \
   --mask "/path/to/test_masks/*.png" \
-  --out /path/to/output_directory
-  --prefix test \
+  --out /path/to/output_directory \
+  --prefix test
 
 # run testing
 cellseg_test \
@@ -312,8 +315,8 @@ conda activate cellseg
 cellseg_generate_list \
   --bf "/path/to/predict_images/*.png" \
   --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for cellseg_generate_list \
-  --out /path/to/output_directory
-  --prefix predict \
+  --out /path/to/output_directory \
+  --prefix predict
 
 # run prediction
 cellseg_predict \
