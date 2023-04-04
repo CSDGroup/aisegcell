@@ -4,11 +4,12 @@
 
 # *CellSeg* - Overview
 This repository contains a `torch` implementation of U-Net ([Ronneberger et al., 2015](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)).
-We provide [trained](#trained-models) models for segmenting nuclei and whole cells in bright field images.
+We provide [trained](#trained-models) models to semantically segment nuclei and whole cells in bright field images.
 Please cite [this paper](#citation) if you are using this code in your research.
 
 ## Contents
   - [Installation](#installation)
+  - [Data](#data)
   - [Training](#training)
     - [Trained models](#trained-models)
   - [Testing](#testing)
@@ -104,6 +105,14 @@ pip install torch==1.10.2 torchvision==0.11.3
 # note the installation of v1.5.9 does not use pip install lightning
 pip install pytorch-lightning==1.5.9
 ```
+
+
+## Data
+U-Net is currently intended for single-class semantic segmentation. Input images are expected to be 8-bit or
+16-bit greyscale images. Segmentation masks are expected to decode background as 0 intensity and all intensities
+>0 are converted to a single intensity value (255). Consequently, different instances of a class (instance
+segmentation) or multi-class segmentations are handled as single-class segmentations. Have a look at 
+[this notebook]() for a data example. 
 
 
 ## Training
