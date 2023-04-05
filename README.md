@@ -15,7 +15,7 @@ Please cite [this paper](#citation) if you are using this code in your research.
   - [Testing](#testing)
   - [Predicting](#predicting)
     - [napari plugin](#napari-plugin)
-  - [image annotation tools](#image-annotation-tools)
+  - [Image annotation tools](#image-annotation-tools)
   - [Troubleshooting & support](#troubleshooting-&-support)
   - [Citation](#citation)
 
@@ -31,8 +31,8 @@ use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` a
 
 1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). 
 [Here](https://testdriven.io/blog/python-environments/) is a list of different python virtual environment tools.
-`cellseg` was tested with `python 3.8.6`
-Open your command line application and create a (e.g. `conda`) virtual environment
+`cellseg` was tested with `python 3.8.6`. Open your command line application and create a (e.g. `conda`) virtual 
+environment
 
     ```bash
     conda create -n cellseg python=3.8
@@ -112,11 +112,10 @@ pip install torch==1.10.2 torchvision==0.11.3
 pip install pytorch-lightning==1.5.9
 ```
 
-
 ## Data
 U-Net is currently intended for single-class semantic segmentation. Input images are expected to be 8-bit or
 16-bit greyscale images. Segmentation masks are expected to decode background as 0 intensity and all intensities
->0 are converted to a single intensity value (255). Consequently, different instances of a class (instance
+\>0 are converted to a single intensity value (255). Consequently, different instances of a class (instance
 segmentation) or multi-class segmentations are handled as single-class segmentations. Have a look at 
 [this notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/data_example.ipynb) 
 for a data example. 
