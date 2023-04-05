@@ -112,12 +112,15 @@ U-Net is currently intended for single-class semantic segmentation. Input images
 16-bit greyscale images. Segmentation masks are expected to decode background as 0 intensity and all intensities
 >0 are converted to a single intensity value (255). Consequently, different instances of a class (instance
 segmentation) or multi-class segmentations are handled as single-class segmentations. Have a look at 
-[this notebook]() for a data example. 
+[this notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/data_example.ipynb) 
+for a data example. 
 
 
 ## Training
-Training U-Net is as simple as calling the command `cellseg_train`. `cellseg_train` is available if you activate
-the virtual environment you [installed](#installation) and can be called with the following arguments:
+Training U-Net is as simple as calling the command `cellseg_train`. We provide a 
+[notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/unet_example.ipynb) on how to train 
+U-Net with a minimal working example. `cellseg_train` is available if you activate the virtual environment you 
+[installed](#installation) and can be called with the following arguments:
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing training image file paths. The CSV file must have the columns `bf` and
@@ -253,8 +256,10 @@ We provide trained models:
 | whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/cellseg.png" title="example whole cell segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 226 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
 
 ## Testing
-A trained U-Net can be tested with `cellseg_test`. `cellseg_test` returns predicted masks and performance
-metrics. `cellseg_test` can be called with the following arguments:
+A trained U-Net can be tested with `cellseg_test`. We provide a 
+[notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/unet_example.ipynb) on how to test
+with U-Net. `cellseg_test` returns predicted masks and performance metrics. `cellseg_test` can be called with the 
+following arguments:
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing test image file paths. The CSV file must have the columns `bf` and
@@ -299,8 +304,10 @@ The output of `cellseg_test` will be stored in subdirectories `lightning_logs/ve
   - `test_masks`: directory containing segmentation masks obtained from U-Net
 
 ## Predicting
-A trained U-Net can used for predictions with `cellseg_predict`. `cellseg_predict` returns only predicted masks
-metrics and can be called with the following arguments:
+A trained U-Net can used for predictions with `cellseg_predict`. We provide a 
+[notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/unet_example.ipynb) on how to
+predict with U-Net. `cellseg_predict` returns only predicted masks metrics and can be called with the following 
+arguments:
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing predict image file paths. The CSV file must have the columns `bf` and
