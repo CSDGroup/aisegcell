@@ -20,14 +20,19 @@ Please cite [this paper](#citation) if you are using this code in your research.
   - [Citation](#citation)
 
 ## Installation
-Installation requires a command line application (e.g. `Terminal`) with [`git` installed](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
-If you operate on `Windows` we recommend using [`Ubuntu on Windows`](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview).
+Installation requires a command line application (e.g. `Terminal`) with 
+[`git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [python](https://www.python.org) installed. 
+If you do not have python installed already, we recommend installing it using the 
+[Anaconda distribution](https://www.anaconda.com/products/distribution). If you operate on `Windows` we recommend using 
+[`Ubuntu on Windows`](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview).
 Alternatively, you can install [`Anaconda`](https://docs.anaconda.com/anaconda/user-guide/getting-started/) and
-use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found [here](https://www.w3schools.com/git/default.asp?remote=github).
+use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found 
+[here](https://www.w3schools.com/git/default.asp?remote=github).
 
-1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). [Here](https://testdriven.io/blog/python-environments/)
-is a list of different python virtual environment tools. Open your command line application and create a 
-(e.g. `conda`) virtual environment
+1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). 
+[Here](https://testdriven.io/blog/python-environments/) is a list of different python virtual environment tools.
+`cellseg` was tested with `python 3.8.6`
+Open your command line application and create a (e.g. `conda`) virtual environment
 
     ```bash
     conda create -n cellseg python=3.8
@@ -79,13 +84,14 @@ is a list of different python virtual environment tools. Open your command line 
         ```
 
 7) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for 
-`Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible ([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
+`Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible 
+([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
  [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and 
  update their drivers if necessary.
 
-8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. `cell_segmentation` was
-tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version `11.3.1`. Depending on
-your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
+8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. 
+`cell_segmentation` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version 
+`11.3.1`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
 ```bash
 # Windows/Linux CPU
