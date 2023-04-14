@@ -373,7 +373,7 @@ def _args_inference():
         "--devices",
         type=str,
         nargs="+",
-        default=["0"],
+        default=["cpu"],
         help='Devices to use for model training. Can be GPU IDs as in default or "cpu".',
     )
 
