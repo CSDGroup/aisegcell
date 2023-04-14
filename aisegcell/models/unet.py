@@ -15,8 +15,8 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from cellseg.utils.datamodule import save_image_mod
-from cellseg.utils.evaluation import compute_f1, compute_iou
+from aisegcell.utils.datamodule import save_image_mod
+from aisegcell.utils.evaluation import compute_f1, compute_iou
 
 slope = 1e-2
 

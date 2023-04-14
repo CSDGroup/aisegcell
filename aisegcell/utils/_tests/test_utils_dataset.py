@@ -5,7 +5,7 @@ import torch
 import torchvision.transforms.functional as tf
 from torchvision import transforms
 
-from cellseg.utils.datamodule import Dataset, Dataset_predict, Dataset_test
+from aisegcell.utils.datamodule import Dataset, Dataset_predict, Dataset_test
 
 
 @pytest.fixture(scope="session")

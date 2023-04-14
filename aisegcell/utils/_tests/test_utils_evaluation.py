@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from cellseg.utils.evaluation import iou, iou_to_f1
+from aisegcell.utils.evaluation import iou, iou_to_f1
 
 
 def test_iou():

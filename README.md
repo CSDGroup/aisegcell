@@ -1,8 +1,8 @@
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Tests](https://github.com/CSDGroup/cell_segmentation/workflows/tests/badge.svg)](https://github.com/CSDGroup/cell_segmentation/actions)
-[![codecov](https://codecov.io/gh/CSDGroup/cell_segmentation/branch/main/graph/badge.svg?token=63T8R6MUMB)](https://codecov.io/gh/CSDGroup/cell_segmentation)
+[![Tests](https://github.com/CSDGroup/aisegcell/workflows/tests/badge.svg)](https://github.com/CSDGroup/aisegcell/actions)
+[![codecov](https://codecov.io/gh/CSDGroup/aisegcell/branch/main/graph/badge.svg?token=63T8R6MUMB)](https://codecov.io/gh/CSDGroup/aisegcell)
 
-# *CellSeg* - Overview
+# aiSEGcell - Overview
 This repository contains a `torch` implementation of U-Net ([Ronneberger et al., 2015](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)).
 We provide [trained](#trained-models) models to semantically segment nuclei and whole cells in bright field images.
 Please cite [this paper](#citation) if you are using this code in your research.
@@ -31,17 +31,17 @@ use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` a
 
 1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). 
 [Here](https://testdriven.io/blog/python-environments/) is a list of different python virtual environment tools.
-`cellseg` was tested with `python 3.8.6`. Open your command line application and create a (e.g. `conda`) virtual 
+`aisegcell` was tested with `python 3.8.6`. Open your command line application and create a (e.g. `conda`) virtual 
 environment
 
     ```bash
-    conda create -n cellseg python=3.8
+    conda create -n aisegcell python=3.8
     ```
 
 2) Activate your virtual environment
 
     ```bash
-    conda activate cellseg
+    conda activate aisegcell
     ```
 
 3) (Optional) If you use `Anaconda Powershell Prompt`, install `git` through `conda`
@@ -56,16 +56,16 @@ environment
     # change directory
     cd /path/to/directory/to/clone/repository/to
 
-    git clone https://github.com/CSDGroup/cell_segmentation.git
+    git clone https://github.com/CSDGroup/aisegcell.git
     ```
 
 5) Navigate to the cloned directory
 
     ```bash
-    cd cell_segmentation
+    cd aisegcell
     ```
 
-6) Install `cell_segmentation`
+6) Install `aisegcell`
     ```bash
     # update pip
     pip install -U pip
@@ -90,7 +90,7 @@ environment
  update their drivers if necessary.
 
 8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. 
-`cell_segmentation` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version 
+`aisegcell` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version 
 `11.3.1`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
 ```bash
@@ -105,7 +105,7 @@ pip install torch==1.10.2 torchvision==0.11.3
 
 ```
 
-9) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `cell_segmentation` was tested with version `1.5.9`.
+9) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `aisegcell` was tested with version `1.5.9`.
 
 ```bash
 # note the installation of v1.5.9 does not use pip install lightning
@@ -117,14 +117,14 @@ U-Net is currently intended for single-class semantic segmentation. Input images
 16-bit greyscale images. Segmentation masks are expected to decode background as 0 intensity and all intensities
 \>0 are converted to a single intensity value (255). Consequently, different instances of a class (instance
 segmentation) or multi-class segmentations are handled as single-class segmentations. Have a look at 
-[this notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/data_example.ipynb) 
+[this notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/data_example.ipynb) 
 for a data example. 
 
 
 ## Training
-Training U-Net is as simple as calling the command `cellseg_train`. We provide a 
-[notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/unet_example.ipynb) on how to train 
-U-Net with a minimal working example. `cellseg_train` is available if you activate the virtual environment you 
+Training U-Net is as simple as calling the command `aisegcell_train`. We provide a 
+[notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to train 
+U-Net with a minimal working example. `aisegcell_train` is available if you activate the virtual environment you 
 [installed](#installation) and can be called with the following arguments:
 
   - `--help`: show help message
@@ -154,7 +154,7 @@ U-Net with a minimal working example. `cellseg_train` is available if you activa
   - `--transform_intensity`: If flag is used random intensity transformations will be applied to input images.
   - `--seed`: None or Int to use for random seeding. Default is `None`.
 
-The command `cellseg_generate_list` can be used to write CSV files for `--data` and `--data_val` and 
+The command `aisegcell_generate_list` can be used to write CSV files for `--data` and `--data_val` and 
 has the following arguments:
   - `--help`: show help message
   - `--bf`: Path ([`glob`](https://docs.python.org/3/library/glob.html) pattern) to input images (e.g. bright field). Naming convention must match naming convention of `--mask`.
@@ -168,23 +168,23 @@ input to `--bf` and `--mask` (see example below).
 Consider the following example:
 ```bash
 # activate the virtual environment
-conda activate cellseg
+conda activate aisegcell
 
 # generate CSV files for data and data_val
-cellseg_generate_list \
+aisegcell_generate_list \
   --bf "/path/to/train_images/*/*.png" # i.e. select all PNG files in all sub-directories of /path/to/train_images\
   --mask "/path/to/train_masks/*/*mask.png" # i.e. select all files in all sub-directories that end with "mask.png"\
   --out /path/to/output_directory \
   --prefix train
 
-cellseg_generate_list \
+aisegcell_generate_list \
   --bf "/path/to/val_images/*.png" \
   --mask "/path/to/val_masks/*.png" \
   --out /path/to/output_directory \
   --prefix val
 
 # starting multi-GPU training
-cellseg_train \
+aisegcell_train \
   --data /path/to/output_directory/train_paths.csv \
   --data_val /path/to/output_directory/val_paths.csv \
   --model Unet \
@@ -204,7 +204,7 @@ cellseg_train \
   --seed 123
 
 # OR retrain an existing checkpoint with single GPU
-cellseg_train \
+aisegcell_train \
   --data /path/to/output_directory/train_paths.csv \
   --data_val /path/to/output_directory/val_paths.csv \
   --model Unet \
@@ -224,7 +224,7 @@ cellseg_train \
   --seed 123
 ```
 
-The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
+The output of `aisegcell_train` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
 `--output_base_dir`. Its contents are:
 
   - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
@@ -246,7 +246,7 @@ The output of `cellseg_train` will be stored in subdirectories `{DATE}_Unet_{ID1
     - `iou_small_epoch`: average `iou_small_epoch` over all validation steps per epoch
     - `loss_epoch`: average `loss_step` over all training gradient steps per epoch
   - `checkpoints`: model checkpoints are stored in this directory. Path to model checkpoints are used as input to
-    `--checkpoint` of `cellseg_train` or `--model` of `cellseg_test` and `cellseg_predict`.
+    `--checkpoint` of `aisegcell_train` or `--model` of `aisegcell_test` and `aisegcell_predict`.
     - `best-f1-epoch={EPOCH}-step={STEP}.ckpt`: model weights with the (currently) highest `f1_epoch`
     - `best-iou-epoch={EPOCH}-step={STEP}.ckpt`: model weights with the (currently) highest `iou_epoch`
     - `best-loss-epoch={EPOCH}-step={STEP}.ckpt`: model weights with the (currently) lowest `loss_val_epoch`
@@ -257,13 +257,13 @@ We provide trained models:
 
 | modality | image format | example image | description | availability |
 | :-- | :-: | :-: | :-: | :-- |
-| nucleus segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/nucseg.png" title="example nucleus segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 9849 images (~620k nuclei). | link to model weights (link to zenodo/model zoo) |
-| whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/cell_segmentation/raw/main/images/cellseg.png" title="example whole cell segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 226 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
+| nucleus segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/aisegcell/raw/main/images/nucseg.png" title="example nucleus segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 9849 images (~620k nuclei). | link to model weights (link to zenodo/model zoo) |
+| whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/aisegcell/raw/main/images/cellseg.png" title="example whole cell segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 224 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
 
 ## Testing
-A trained U-Net can be tested with `cellseg_test`. We provide a 
-[notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/unet_example.ipynb) on how to test
-with U-Net. `cellseg_test` returns predicted masks and performance metrics. `cellseg_test` can be called with the 
+A trained U-Net can be tested with `aisegcell_test`. We provide a 
+[notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to test
+with U-Net. `aisegcell_test` returns predicted masks and performance metrics. `aisegcell_test` can be called with the 
 following arguments:
 
   - `--help`: show help message
@@ -277,22 +277,22 @@ following arguments:
     the first ID will be used. If you want to use the CPU you have to use "cpu". Default is "cpu".
 
 Make sure to activate the virtual environment created during [installation](#installation) before calling
-`cellseg_test`.
+`aisegcell_test`.
 
 Consider the following example:
 ```bash
 # activate the virtual environment
-conda activate cellseg
+conda activate aisegcell
 
 # generate CSV file for data
-cellseg_generate_list \
+aisegcell_generate_list \
   --bf "/path/to/test_images/*.png" \
   --mask "/path/to/test_masks/*.png" \
   --out /path/to/output_directory \
   --prefix test
 
 # run testing
-cellseg_test \
+aisegcell_test \
   --data /path/to/output_directory/test_paths.csv \
   --model /path/to/checkpoint/file.ckpt \
   --suffix mask \
@@ -300,7 +300,7 @@ cellseg_test \
   --devices 0 # predict with GPU 0
 ```
 
-The output of `cellseg_test` will be stored in subdirectories `lightning_logs/version_{ID}/` at
+The output of `aisegcell_test` will be stored in subdirectories `lightning_logs/version_{ID}/` at
 `--output_base_dir`. Its contents are:
 
   - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
@@ -309,9 +309,9 @@ The output of `cellseg_test` will be stored in subdirectories `lightning_logs/ve
   - `test_masks`: directory containing segmentation masks obtained from U-Net
 
 ## Predicting
-A trained U-Net can used for predictions with `cellseg_predict`. We provide a 
-[notebook](https://github.com/CSDGroup/cell_segmentation/blob/main/notebooks/unet_example.ipynb) on how to
-predict with U-Net. `cellseg_predict` returns only predicted masks metrics and can be called with the following 
+A trained U-Net can used for predictions with `aisegcell_predict`. We provide a 
+[notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to
+predict with U-Net. `aisegcell_predict` returns only predicted masks metrics and can be called with the following 
 arguments:
 
   - `--help`: show help message
@@ -325,22 +325,22 @@ arguments:
     the first ID will be used. If you want to use the CPU you have to use "cpu". Default is "cpu".
 
 Make sure to activate the virtual environment created during [installation](#installation) before calling
-`cellseg_predict`.
+`aisegcell_predict`.
 
 Consider the following example:
 ```bash
 # activate the virtual environment
-conda activate cellseg
+conda activate aisegcell
 
 # generate CSV file for data
-cellseg_generate_list \
+aisegcell_generate_list \
   --bf "/path/to/predict_images/*.png" \
-  --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for cellseg_generate_list \
+  --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for aisegcell_generate_list \
   --out /path/to/output_directory \
   --prefix predict
 
 # run prediction
-cellseg_predict \
+aisegcell_predict \
   --data /path/to/output_directory/predict_paths.csv \
   --model /path/to/checkpoint/file.ckpt \
   --suffix mask \
@@ -348,14 +348,14 @@ cellseg_predict \
   --devices 0 # predict with GPU 0
 ```
 
-The output of `cellseg_predict` will be stored in subdirectories `lightning_logs/version_{ID}/` at
+The output of `aisegcell_predict` will be stored in subdirectories `lightning_logs/version_{ID}/` at
 `--output_base_dir`. Its contents are:
 
   - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
   - `predicted_masks`: directory containing segmentation masks obtained from U-Net
 
 ### napari plugin
-`cellseg_predict` is also available as a plug-in for `napari` (link to napari-hub page and github page). 
+`aisegcell_predict` is also available as a plug-in for `napari` (link to napari-hub page and github page). 
 
 ## Image annotation tools
 Available tools to annotate segmentations include:
@@ -366,7 +366,7 @@ Available tools to annotate segmentations include:
   - [ilastik](https://www.ilastik.org)
 
 ## Troubleshooting & support
-In case you are experiencing issues with `cellseg` inform us via the [issue tracker](https://github.com/CSDGroup/cell_segmentation/issues).
+In case you are experiencing issues with `aisegcell` inform us via the [issue tracker](https://github.com/CSDGroup/aisegcell/issues).
 Before you submit an issue, check if it has been addressed in a previous issue.
 
 ## Citation
