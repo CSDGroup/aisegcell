@@ -2,7 +2,7 @@
 [![Tests](https://github.com/CSDGroup/aisegcell/workflows/tests/badge.svg)](https://github.com/CSDGroup/aisegcell/actions)
 [![codecov](https://codecov.io/gh/CSDGroup/aisegcell/branch/main/graph/badge.svg?token=63T8R6MUMB)](https://codecov.io/gh/CSDGroup/aisegcell)
 
-# *aiSEGcell - Overview
+# aiSEGcell - Overview
 This repository contains a `torch` implementation of U-Net ([Ronneberger et al., 2015](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28)).
 We provide [trained](#trained-models) models to semantically segment nuclei and whole cells in bright field images.
 Please cite [this paper](#citation) if you are using this code in your research.
