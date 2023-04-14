@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import pytest
 
-from cellseg.preprocessing.generate_list import _generate_df
+from aisegcell.preprocessing.generate_list import _generate_df
 
 
 @pytest.fixture(scope="session")

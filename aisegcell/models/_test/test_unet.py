@@ -3,7 +3,7 @@ import math
 import pytest
 import torch
 
-from cellseg.models.unet import LitUnet, UNet_rec
+from aisegcell.models.unet import LitUnet, UNet_rec
 
 
 def test_Unet_rec():

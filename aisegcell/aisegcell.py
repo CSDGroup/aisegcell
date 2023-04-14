@@ -17,9 +17,9 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import CSVLogger
 
-from cellseg.models.unet import LitUnet
-from cellseg.utils.callbacks import CheckpointCallback
-from cellseg.utils.datamodule import DataModule
+from aisegcell.models.unet import LitUnet
+from aisegcell.utils.callbacks import CheckpointCallback
+from aisegcell.utils.datamodule import DataModule
 
 
 def train():
