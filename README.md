@@ -258,7 +258,7 @@ We provide trained models:
 | modality | image format | example image | description | availability |
 | :-- | :-: | :-: | :-: | :-- |
 | nucleus segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/aisegcell/raw/main/images/nucseg.png" title="example nucleus segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 9849 images (~620k nuclei). | link to model weights (link to zenodo/model zoo) |
-| whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/aisegcell/raw/main/images/cellseg.png" title="example whole cell segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 226 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
+| whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/aisegcell/raw/main/images/cellseg.png" title="example whole cell segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 224 images (~12k cells). | link to model weights (link to zenodo/model zoo) |
 
 ## Testing
 A trained U-Net can be tested with `aisegcell_test`. We provide a 
