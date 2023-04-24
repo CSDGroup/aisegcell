@@ -230,11 +230,11 @@ class Dataset:
         """
 
         image_path = self.data.loc[idx, "bf"]
-        image = io.imread(image_path)
+        image = io.imread(image_path, as_gray=True)
         # image in format (height, width) or (depth, height, width)
 
         mask_path = self.data.loc[idx, "mask"]
-        mask = io.imread(mask_path)
+        mask = io.imread(mask_path, as_gray=True)
         # mask in format (height, width) or (depth, height, width)
 
         # assert all masks are semantic segmentation in 8bit format
@@ -274,9 +274,9 @@ class Dataset:
         if idx == "random":
             idx = random.choice(self.data.index)
 
-        image = io.imread(self.data.bf[idx])
+        image = io.imread(self.data.bf[idx], as_gray=True)
 
-        mask = io.imread(self.data.mask[idx])
+        mask = io.imread(self.data.mask[idx], as_gray=True)
 
         if len(image.shape) == 2:
             f = plt.figure()
@@ -450,11 +450,11 @@ class Dataset_test:
         """
 
         image_path = self.data.loc[idx, "bf"]
-        image = io.imread(image_path)
+        image = io.imread(image_path, as_gray=True)
         # image in format (height, width) or (depth, height, width)
 
         mask_path = self.data.loc[idx, "mask"]
-        mask = io.imread(mask_path)
+        mask = io.imread(mask_path, as_gray=True)
         # mask in format (height, width) or (depth, height, width)
 
         # assert all masks are semantic segmentation in 8bit format
@@ -600,7 +600,7 @@ class Dataset_predict:
         """
 
         image_path = self.data.loc[idx, "bf"]
-        image = io.imread(image_path)
+        image = io.imread(image_path, as_gray=True)
         # image in format (height, width) or (depth, height, width)
 
         # preprocess image and mask
@@ -671,7 +671,7 @@ class DataModule(pl.LightningDataModule):
         """
         # catch image data type
         tmp = pd.read_csv(self.path_data)
-        img = io.imread(tmp.bf[0])
+        img = io.imread(tmp.bf[0], as_gray=True)
 
         if img.dtype == np.uint8:
             max_intensity = 255.0
