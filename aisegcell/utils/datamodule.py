@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
+from PIL import Image
 from skimage import io
 from skimage.util import img_as_ubyte
 from torch.utils.data import DataLoader
