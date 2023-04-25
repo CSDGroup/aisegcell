@@ -455,8 +455,6 @@ class Dataset_test:
         image = img_as_ubyte(image)
         # image in format (height, width) or (depth, height, width)
 
-        ipdb.set_trace()
-
         mask_path = self.data.loc[idx, "mask"]
         mask = io.imread(mask_path, as_gray=True)
         # mask in format (height, width) or (depth, height, width)
