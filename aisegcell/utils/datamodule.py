@@ -19,8 +19,8 @@ import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-from PIL import Image
 from skimage import io
+from skimage.util import img_as_ubyte
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.utils import make_grid
@@ -231,6 +231,7 @@ class Dataset:
 
         image_path = self.data.loc[idx, "bf"]
         image = io.imread(image_path, as_gray=True)
+        image = img_as_ubyte(image)
         # image in format (height, width) or (depth, height, width)
 
         mask_path = self.data.loc[idx, "mask"]
@@ -451,7 +452,10 @@ class Dataset_test:
 
         image_path = self.data.loc[idx, "bf"]
         image = io.imread(image_path, as_gray=True)
+        image = img_as_ubyte(image)
         # image in format (height, width) or (depth, height, width)
+
+        ipdb.set_trace()
 
         mask_path = self.data.loc[idx, "mask"]
         mask = io.imread(mask_path, as_gray=True)
@@ -601,6 +605,7 @@ class Dataset_predict:
 
         image_path = self.data.loc[idx, "bf"]
         image = io.imread(image_path, as_gray=True)
+        image = img_as_ubyte(image)
         # image in format (height, width) or (depth, height, width)
 
         # preprocess image and mask
@@ -672,6 +677,7 @@ class DataModule(pl.LightningDataModule):
         # catch image data type
         tmp = pd.read_csv(self.path_data)
         img = io.imread(tmp.bf[0], as_gray=True)
+        img = img_as_ubyte(img)
 
         if img.dtype == np.uint8:
             max_intensity = 255.0
