@@ -240,7 +240,7 @@ class Dataset:
         # mask in format (height, width) or (depth, height, width)
 
         # assert all masks are semantic segmentation in 8bit format
-        mask = np.array(mask) # circumvent read-only arrays
+        mask = np.array(mask)  # circumvent read-only arrays
         mask[mask > 0] = 255
         mask = mask.astype(np.uint8)
 
@@ -461,7 +461,7 @@ class Dataset_test:
         # mask in format (height, width) or (depth, height, width)
 
         # assert all masks are semantic segmentation in 8bit format
-        mask = np.array(mask) # circumvent read-only arrays
+        mask = np.array(mask)  # circumvent read-only arrays
         mask[mask > 0] = 255
         mask = mask.astype(np.uint8)
 
