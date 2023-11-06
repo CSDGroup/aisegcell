@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/496600864.svg)](https://zenodo.org/doi/10.5281/zenodo.10076235)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Tests](https://github.com/CSDGroup/aisegcell/workflows/tests/badge.svg)](https://github.com/CSDGroup/aisegcell/actions)
 [![codecov](https://codecov.io/gh/CSDGroup/aisegcell/branch/main/graph/badge.svg?token=63T8R6MUMB)](https://codecov.io/gh/CSDGroup/aisegcell)
