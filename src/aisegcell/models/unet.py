@@ -142,7 +142,9 @@ class Up(nn.Module):
 
         # if bilinear use normal convolutions to reduce the number of channels
         if bilinear:
-            self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
+            self.up = nn.Upsample(
+                scale_factor=2, mode="bilinear", align_corners=True
+            )
             self.conv = DoubleConv(in_channels, out_channels, in_channels // 2)
         else:
             self.up = nn.ConvTranspose2d(
@@ -155,7 +157,10 @@ class Up(nn.Module):
         diffY = x2.size()[2] - x1.size()[2]
         diffX = x2.size()[3] - x1.size()[3]
 
-        x1 = F.pad(x1, [diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2])
+        x1 = F.pad(
+            x1,
+            [diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2],
+        )
         x = torch.cat([x2, x1], dim=1)
         return self.conv(x)
 
@@ -185,7 +190,7 @@ class OutConv(nn.Module):
 
         -
         """
-        super(OutConv, self).__init__()
+        super().__init__()
 
         self.conv = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, kernel_size=1), nn.Sigmoid()
@@ -233,7 +238,7 @@ class UNet_rec(nn.Module):
         -
         """
 
-        super(UNet_rec, self).__init__()
+        super().__init__()
 
         n_channels = 1  # number of channels and classes are fixed to 1
         n_classes = 1
@@ -245,7 +250,9 @@ class UNet_rec(nn.Module):
         self.receptive_field = receptive_field
         self.enc_block = []
         self.dec_block = []
-        self.n_blocks = int(math.log2(self.receptive_field))  # number of layers
+        self.n_blocks = int(
+            math.log2(self.receptive_field)
+        )  # number of layers
         factor = 2 if bilinear else 1
 
         # set up encoder
@@ -263,9 +270,13 @@ class UNet_rec(nn.Module):
                 if out_filters <= self.max_filters // 2
                 else self.max_filters // 2
             )
-            out_filters = self.max_filters if i == (self.n_blocks - 1) else out_filters
             out_filters = (
-                out_filters // factor if i == (self.n_blocks - 1) else out_filters
+                self.max_filters if i == (self.n_blocks - 1) else out_filters
+            )
+            out_filters = (
+                out_filters // factor
+                if i == (self.n_blocks - 1)
+                else out_filters
             )
 
             self.enc_block.append(Down(in_filters, out_filters))
@@ -274,7 +285,9 @@ class UNet_rec(nn.Module):
         for i in range(self.n_blocks - 1, -1, -1):
             in_filters = base_filters * (2 ** (i + 1))
             in_filters = (
-                in_filters if in_filters <= self.max_filters else self.max_filters
+                in_filters
+                if in_filters <= self.max_filters
+                else self.max_filters
             )
             out_filters = base_filters * (2**i)
             out_filters = (
@@ -354,7 +367,7 @@ class LitUnet(pl.LightningModule):
         None.
 
         """
-        super(LitUnet, self).__init__()
+        super().__init__()
 
         # save hyperparameters from __init__ upon checkpoints in hparams.yaml
         self.save_hyperparameters()
@@ -418,7 +431,9 @@ class LitUnet(pl.LightningModule):
         self.model_class = checkpoint["model_class"]
         self.max_filters = checkpoint["max_filters"]
 
-    def training_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
+    def training_step(
+        self, batch: List[torch.Tensor], batch_idx: int
+    ) -> torch.Tensor:
         imgs, masks, ids = batch
         masks_hat = self(imgs)
         weight = (self.loss_weight - 1) * masks + 1
@@ -431,13 +446,14 @@ class LitUnet(pl.LightningModule):
     def validation_step(
         self, batch: List[torch.Tensor], batch_idx: int
     ) -> torch.Tensor:
-
         imgs, masks, ids = batch
         masks_hat = self(imgs)
         weight = (self.loss_weight - 1) * masks + 1
 
         loss_val = F.binary_cross_entropy(masks_hat, masks, weight=weight)
-        self.log("loss_val", loss_val, on_step=True, on_epoch=True, sync_dist=True)
+        self.log(
+            "loss_val", loss_val, on_step=True, on_epoch=True, sync_dist=True
+        )
 
         f1_scores = compute_f1(masks_hat, masks, self.t_min, self.t_max)
         self.log(
@@ -480,21 +496,53 @@ class LitUnet(pl.LightningModule):
 
         return loss_val
 
-    def test_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
+    def test_step(
+        self, batch: List[torch.Tensor], batch_idx: int
+    ) -> torch.Tensor:
         imgs, masks, ids = batch
         masks_hat = self(imgs)
         weight = (self.loss_weight - 1) * masks + 1
 
         # save loss
         loss_test = F.binary_cross_entropy(masks_hat, masks, weight=weight)
-        self.log("loss_test", loss_test, on_step=True, on_epoch=True, sync_dist=False)
+        self.log(
+            "loss_test",
+            loss_test,
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
 
         # save f1 and associated metrics
         f1_scores = compute_f1(masks_hat, masks, self.t_min, self.t_max)
-        self.log("f1", f1_scores["f1"][0], on_step=True, on_epoch=True, sync_dist=False)
-        self.log("tp", f1_scores["tp"][0], on_step=True, on_epoch=True, sync_dist=False)
-        self.log("fp", f1_scores["fp"][0], on_step=True, on_epoch=True, sync_dist=False)
-        self.log("fn", f1_scores["fn"][0], on_step=True, on_epoch=True, sync_dist=False)
+        self.log(
+            "f1",
+            f1_scores["f1"][0],
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
+        self.log(
+            "tp",
+            f1_scores["tp"][0],
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
+        self.log(
+            "fp",
+            f1_scores["fp"][0],
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
+        self.log(
+            "fn",
+            f1_scores["fn"][0],
+            on_step=True,
+            on_epoch=True,
+            sync_dist=False,
+        )
         self.log(
             "splits",
             f1_scores["splits"][0],
@@ -554,11 +602,13 @@ class LitUnet(pl.LightningModule):
         # save inferred masks
         for mask, i in zip(masks_hat, ids):
             if "out" in self.trainer.datamodule.data_test.data.columns:
-                mask_path = self.trainer.datamodule.data_test.data.out[i.item()]
+                mask_path = self.trainer.datamodule.data_test.data.out[
+                    i.item()
+                ]
             else:
-                mask_path = self.trainer.datamodule.data_test.data.bf[i.item()].split(
-                    os.sep
-                )[-1]
+                mask_path = self.trainer.datamodule.data_test.data.bf[
+                    i.item()
+                ].split(os.sep)[-1]
                 mask_path = mask_path.split(".")
                 mask_path[-2] = mask_path[-2] + self.suffix
                 mask_path = ".".join(mask_path)
@@ -569,7 +619,9 @@ class LitUnet(pl.LightningModule):
 
         return loss_test
 
-    def predict_step(self, batch: List[torch.Tensor], batch_idx: int) -> torch.Tensor:
+    def predict_step(
+        self, batch: List[torch.Tensor], batch_idx: int
+    ) -> torch.Tensor:
         imgs, ids = batch
         masks_hat = self(imgs)
 
@@ -579,11 +631,13 @@ class LitUnet(pl.LightningModule):
         # save predicted masks
         for img, i in zip(masks_hat, ids):
             if "out" in self.trainer.datamodule.data_predict.data.columns:
-                img_path = self.trainer.datamodule.data_predict.data.out[i.item()]
+                img_path = self.trainer.datamodule.data_predict.data.out[
+                    i.item()
+                ]
             else:
-                img_path = self.trainer.datamodule.data_predict.data.bf[i.item()].split(
-                    os.sep
-                )[-1]
+                img_path = self.trainer.datamodule.data_predict.data.bf[
+                    i.item()
+                ].split(os.sep)[-1]
                 img_path = img_path.split(".")
                 img_path[-2] = img_path[-2] + self.suffix
                 img_path = ".".join(img_path)
@@ -598,7 +652,8 @@ class LitUnet(pl.LightningModule):
 
     def on_test_start(self):
         os.makedirs(
-            os.path.join(self.trainer.logger.log_dir, "test_masks"), exist_ok=True
+            os.path.join(self.trainer.logger.log_dir, "test_masks"),
+            exist_ok=True,
         )
 
     def on_predict_start(self):

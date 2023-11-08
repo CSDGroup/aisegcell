@@ -186,16 +186,24 @@ def train():
     seed = args.seed
     loss_weight = args.loss_weight
 
-    assert min(shape) >= receptive_field, "min(shape) >= receptive_field is required."
+    assert (
+        min(shape) >= receptive_field
+    ), "min(shape) >= receptive_field is required."
 
     # create directories
     d = date.today()
     identifier = (
-        str(d.year)[2:] + str(d.month).zfill(2) + str(d.day).zfill(2) + "_" + args.model
+        str(d.year)[2:]
+        + str(d.month).zfill(2)
+        + str(d.day).zfill(2)
+        + "_"
+        + args.model
     )
     rnd_id = str(random.getrandbits(15)).zfill(5)
 
-    while os.path.exists(os.path.join(args.output_base_dir, f"{identifier}_{rnd_id}")):
+    while os.path.exists(
+        os.path.join(args.output_base_dir, f"{identifier}_{rnd_id}")
+    ):
         rnd_id = str(random.getrandbits(15)).zfill(5)
 
     identifier += f"_{rnd_id}"
@@ -214,9 +222,7 @@ def train():
         gpus = None
         strategy = None
         sync_batchnorm = False
-        num_processes = (
-            1  # NOTE: currently not intended to support multi-process CPU training
-        )
+        num_processes = 1  # NOTE: currently not intended to support multi-process CPU training
     else:
         accelerator = "gpu"
         gpus = [int(device) for device in devices]
@@ -224,7 +230,9 @@ def train():
 
     # assert correct setup for multiprocessing
     if multiprocessing:
-        assert accelerator == "gpu", "multiprocessing is only enabled for GPU devices."
+        assert (
+            accelerator == "gpu"
+        ), "multiprocessing is only enabled for GPU devices."
         assert (
             len(gpus) > 1
         ), f"multiprocessing requires >1 devices, but {len(gpus)} devices are provided."
@@ -435,7 +443,11 @@ def _initialise_inferrence(
 
 
 def test(
-    data: str, model: str, devices: List[str], output_base_dir: str, suffix: str
+    data: str,
+    model: str,
+    devices: List[str],
+    output_base_dir: str,
+    suffix: str,
 ) -> None:
     """
     Run model testing.

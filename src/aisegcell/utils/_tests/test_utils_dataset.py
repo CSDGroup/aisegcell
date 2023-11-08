@@ -60,8 +60,12 @@ def test_preprocess(csv_file):
     image_tensor = dataset._preprocess(image, mask)
     output_image, output_mask = image_tensor
 
-    expected_image = torch.Tensor([[0.0, 0.2], [1.0, 0.0]]).type(torch.FloatTensor)
-    expected_mask = torch.Tensor([[0.2, 0.4], [0, 1.0]]).type(torch.FloatTensor)
+    expected_image = torch.Tensor([[0.0, 0.2], [1.0, 0.0]]).type(
+        torch.FloatTensor
+    )
+    expected_mask = torch.Tensor([[0.2, 0.4], [0, 1.0]]).type(
+        torch.FloatTensor
+    )
 
     assert (
         torch.all(torch.eq(output_image, expected_image)).item()
@@ -76,7 +80,10 @@ def test_preprocess_transform(csv_file):
     """
 
     transform = transforms.Compose(
-        [transforms.Normalize(0.0, 255.0), transforms.Lambda(lambda img: tf.hflip(img))]
+        [
+            transforms.Normalize(0.0, 255.0),
+            transforms.Lambda(lambda img: tf.hflip(img)),
+        ]
     )
     dataset = Dataset(csv_file, transform, shape=(2, 2))
 
@@ -86,8 +93,12 @@ def test_preprocess_transform(csv_file):
     image_tensor = dataset._preprocess(image, mask)
     output_image, output_mask = image_tensor
 
-    expected_image = torch.Tensor([[0.2, 0.0], [0.0, 1.0]]).type(torch.FloatTensor)
-    expected_mask = torch.Tensor([[0.4, 0.2], [1.0, 0.0]]).type(torch.FloatTensor)
+    expected_image = torch.Tensor([[0.2, 0.0], [0.0, 1.0]]).type(
+        torch.FloatTensor
+    )
+    expected_mask = torch.Tensor([[0.4, 0.2], [1.0, 0.0]]).type(
+        torch.FloatTensor
+    )
 
     assert (
         torch.all(torch.eq(output_image, expected_image)).item()
@@ -121,8 +132,12 @@ def test_preprocess_test(csv_file):
     image_tensor = dataset_test._preprocess(image, mask)
     output_image, output_mask = image_tensor
 
-    expected_image = torch.Tensor([[0.0, 0.2], [1.0, 0.0]]).type(torch.FloatTensor)
-    expected_mask = torch.Tensor([[0.2, 0.4], [0, 1.0]]).type(torch.FloatTensor)
+    expected_image = torch.Tensor([[0.0, 0.2], [1.0, 0.0]]).type(
+        torch.FloatTensor
+    )
+    expected_mask = torch.Tensor([[0.2, 0.4], [0, 1.0]]).type(
+        torch.FloatTensor
+    )
 
     assert (
         torch.all(torch.eq(output_image, expected_image)).item()
@@ -147,6 +162,8 @@ def test_preprocess_predict(csv_file):
 
     output_image = dataset_pred._preprocess(image)
 
-    expected_image = torch.Tensor([[0.0, 0.2], [1.0, 0.0]]).type(torch.FloatTensor)
+    expected_image = torch.Tensor([[0.0, 0.2], [1.0, 0.0]]).type(
+        torch.FloatTensor
+    )
 
     assert torch.all(torch.eq(output_image, expected_image))

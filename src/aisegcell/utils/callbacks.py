@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #######################################################################################################################
 # This script handels the loading and processing of the input dataset for cell segmentation with Unet                 #
 # Contains the pytorch lightning DataModule                                                                           #
@@ -39,12 +38,16 @@ class CheckpointCallback(Callback):
                     # we assume the user has tested pretrained model and it is not sufficient
                     # --> we do not require a baseline for the untrained model
                     if trainer.callbacks[i].monitor == "f1":
-                        trainer.callbacks[i].best_model_score = torch.tensor(0.0)
+                        trainer.callbacks[i].best_model_score = torch.tensor(
+                            0.0
+                        )
                         trainer.callbacks[i].best_k_models[
                             trainer.callbacks[i].best_model_path
                         ] = torch.tensor(0.0)
                     else:
-                        trainer.callbacks[i].best_model_score = torch.tensor(10.0)
+                        trainer.callbacks[i].best_model_score = torch.tensor(
+                            10.0
+                        )
                         trainer.callbacks[i].best_k_models[
                             trainer.callbacks[i].best_model_path
                         ] = torch.tensor(10.0)

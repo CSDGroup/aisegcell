@@ -1,20 +1,30 @@
 repos:
--   repo: https://github.com/pycqa/isort
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-docstring-first
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
-    - id: isort
-      exclude: _vendor|vendored|examples
-      args: ["--profile", "black"]
--   repo: https://github.com/python/black
-    rev: 22.3.0
+      - id: isort
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
     hooks:
-    - id: black
-      pass_filenames: true
-      exclude: _vendor|vendored|examples
--   repo: https://github.com/PyCQA/flake8
-    rev: 3.9.2
+      - id: pyupgrade
+        args: [--py38-plus, --keep-runtime-typing]
+  - repo: https://github.com/myint/autoflake
+    rev: v2.0.1
     hooks:
-    - id: flake8
-      pass_filenames: true
-      # this seems to need to be here in addition to setup.cfg
-      exclude: _vendor|vendored|__init__.py|examples
+      - id: autoflake
+        args: ["--in-place", "--remove-all-unused-imports"]
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        additional_dependencies: [flake8-typing-imports>=1.9.0]

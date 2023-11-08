@@ -165,7 +165,11 @@ def iou_to_f1(
         inaccurate_masks.append(inaccurate_masks_tmp)
 
         # compute f1-score
-        f1.append(2 * tp[i] / (2 * tp[i] + fp[i] + fn[i] + inaccurate_masks[i] + 1e-9))
+        f1.append(
+            2
+            * tp[i]
+            / (2 * tp[i] + fp[i] + fn[i] + inaccurate_masks[i] + 1e-9)
+        )
 
     scores = {
         "f1": torch.FloatTensor(f1),
@@ -180,7 +184,9 @@ def iou_to_f1(
     return scores
 
 
-def remove_cells(original_image: np.array, labels_to_remove: List[int]) -> torch.Tensor:
+def remove_cells(
+    original_image: np.array, labels_to_remove: List[int]
+) -> torch.Tensor:
     """
     Remove cells with certain labels from a instant segmentation mask.
 
@@ -234,7 +240,6 @@ def compute_iou(pred: torch.Tensor, gt: torch.Tensor) -> List[float]:
 
     # loop through list of tensors
     for mask, mask_hat in zip(gt, pred):
-
         mask = mask.cpu().numpy()
         mask_hat = mask_hat.cpu()
 

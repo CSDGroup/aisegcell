@@ -22,7 +22,6 @@ def test_Unet_rec():
 
 
 def test_Unet_sigmoid():
-
     """
     Testing range of expected output tensor.
     Uses Sigmoid function and threfore output tensor should be between [0,1]
