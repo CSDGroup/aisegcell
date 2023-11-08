@@ -28,9 +28,7 @@ def arg_parse():
 
     Returns a namespace from `argparse.parse_args()`.
     """
-    desc = (
-        "Program to obtain a .csv file containing matching bf/mask paths in each row."
-    )
+    desc = "Program to obtain a .csv file containing matching bf/mask paths in each row."
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument(

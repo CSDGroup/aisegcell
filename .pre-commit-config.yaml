@@ -1,20 +1,15 @@
 repos:
--   repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
     hooks:
-    - id: isort
-      exclude: _vendor|vendored|examples
-      args: ["--profile", "black"]
--   repo: https://github.com/python/black
-    rev: 22.3.0
+      - id: check-docstring-first
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.256
     hooks:
-    - id: black
-      pass_filenames: true
-      exclude: _vendor|vendored|examples
--   repo: https://github.com/PyCQA/flake8
-    rev: 3.9.2
+      - id: ruff
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
     hooks:
-    - id: flake8
-      pass_filenames: true
-      # this seems to need to be here in addition to setup.cfg
-      exclude: _vendor|vendored|__init__.py|examples
+      - id: black

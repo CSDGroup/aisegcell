@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #######################################################################################################################
 # This script handels the loading and processing of the input dataset for cell segmentation with Unet                 #
 # Contains the pytorch lightning DataModule                                                                           #
@@ -12,7 +11,7 @@
 import pathlib
 import random
 from os import path
-from typing import BinaryIO, List, Optional, Text, Tuple, Union
+from typing import BinaryIO, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -528,7 +527,9 @@ class Dataset_predict:
         self.transform_img = transform_img
         self.data = pd.read_csv(path_data_predict)
 
-        assert "bf" in self.data.columns, 'The input file requires "bf" as a header.'
+        assert (
+            "bf" in self.data.columns
+        ), 'The input file requires "bf" as a header.'
 
         if bit_depth == 8:
             self.bit_depth = np.uint8
@@ -710,7 +711,10 @@ class DataModule(pl.LightningDataModule):
                     [
                         transforms.Normalize(0.0, max_intensity),
                         transforms.ColorJitter(
-                            brightness=0.7, contrast=0.5, saturation=0.5, hue=0.5
+                            brightness=0.7,
+                            contrast=0.5,
+                            saturation=0.5,
+                            hue=0.5,
                         ),
                         transforms.GaussianBlur(kernel_size=5),
                         transforms.RandomAdjustSharpness(4, p=0.5),
@@ -784,18 +788,24 @@ class DataModule(pl.LightningDataModule):
         )
 
     def val_dataloader(self):
-        return DataLoader(self.data_val, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(
+            self.data_val, batch_size=self.batch_size, num_workers=4
+        )
 
     def test_dataloader(self):
-        return DataLoader(self.data_test, batch_size=self.batch_size, num_workers=4)
+        return DataLoader(
+            self.data_test, batch_size=self.batch_size, num_workers=4
+        )
 
     def predict_dataloader(self):
-        return DataLoader(self.data_predict, batch_size=self.batch_size, num_workers=0)
+        return DataLoader(
+            self.data_predict, batch_size=self.batch_size, num_workers=0
+        )
 
 
 def save_image_mod(
     tensor: Union[torch.Tensor, List[torch.Tensor]],
-    fp: Union[Text, pathlib.Path, BinaryIO],
+    fp: Union[str, pathlib.Path, BinaryIO],
     nrow: int = 8,
     padding: int = 2,
     normalize: bool = False,
@@ -851,7 +861,14 @@ def save_image_mod(
 
     # Add 0.5 after unnormalizing to [0, 255] to round to nearest integer --> modified to obtain grayscale image
     if n_channels == 1:
-        ndarr = grid[0].mul(255).add_(0.5).clamp_(0, 255).to("cpu", torch.uint8).numpy()
+        ndarr = (
+            grid[0]
+            .mul(255)
+            .add_(0.5)
+            .clamp_(0, 255)
+            .to("cpu", torch.uint8)
+            .numpy()
+        )
     else:
         ndarr = (
             grid.mul(255)

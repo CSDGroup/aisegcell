@@ -21,18 +21,18 @@ Please cite [this paper](#citation) if you are using this code in your research.
   - [Citation](#citation)
 
 ## Installation
-Installation requires a command line application (e.g. `Terminal`) with 
-[`git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [python](https://www.python.org) installed. 
-If you do not have python installed already, we recommend installing it using the 
-[Anaconda distribution](https://www.anaconda.com/products/distribution). If you operate on `Windows` we recommend using 
+Installation requires a command line application (e.g. `Terminal`) with
+[`git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [python](https://www.python.org) installed.
+If you do not have python installed already, we recommend installing it using the
+[Anaconda distribution](https://www.anaconda.com/products/distribution). If you operate on `Windows` we recommend using
 [`Ubuntu on Windows`](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview).
 Alternatively, you can install [`Anaconda`](https://docs.anaconda.com/anaconda/user-guide/getting-started/) and
-use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found 
+use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found
 [here](https://www.w3schools.com/git/default.asp?remote=github).
 
-1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/). 
+1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/).
 [Here](https://testdriven.io/blog/python-environments/) is a list of different python virtual environment tools.
-`aisegcell` was tested with `python 3.8.6`. Open your command line application and create a (e.g. `conda`) virtual 
+`aisegcell` was tested with `python 3.8.6`. Open your command line application and create a (e.g. `conda`) virtual
 environment
 
     ```bash
@@ -69,7 +69,7 @@ environment
 6) Install `aisegcell`
     ```bash
     # update pip
-    pip install -U pip
+    pip install -U pip==23.2.1
     ```
 
     1) as a user
@@ -78,20 +78,20 @@ environment
         pip install .
         ```
     2) as a developer (in editable mode with development dependencies and pre-commit hooks)
- 
+
         ```bash
         pip install -e ".[dev]"
         pre-commit install
         ```
 
-7) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for 
-`Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible 
+7) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for
+`Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible
 ([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
- [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and 
+ [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and
  update their drivers if necessary.
 
-8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system. 
-`aisegcell` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version 
+8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system.
+`aisegcell` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version
 `11.3.1`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
 ```bash
@@ -117,26 +117,26 @@ pip install pytorch-lightning==1.5.9
 U-Net is currently intended for single-class semantic segmentation. Input images are expected to be 8-bit or
 16-bit greyscale images. Segmentation masks are expected to decode background as 0 intensity and all intensities
 \>0 are converted to a single intensity value (255). Consequently, different instances of a class (instance
-segmentation) or multi-class segmentations are handled as single-class segmentations. Have a look at 
-[this notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/data_example.ipynb) 
-for a data example. 
+segmentation) or multi-class segmentations are handled as single-class segmentations. Have a look at
+[this notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/data_example.ipynb)
+for a data example.
 
 
 ## Training
-Training U-Net is as simple as calling the command `aisegcell_train`. We provide a 
-[notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to train 
-U-Net with a minimal working example. `aisegcell_train` is available if you activate the virtual environment you 
+Training U-Net is as simple as calling the command `aisegcell_train`. We provide a
+[notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to train
+U-Net with a minimal working example. `aisegcell_train` is available if you activate the virtual environment you
 [installed](#installation) and can be called with the following arguments:
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing training image file paths. The CSV file must have the columns `bf` and
-    `mask`. 
+    `mask`.
   - `--data_val`: Path to CSV file containing validation image file paths (same format as `--data`).
   - `--output_base_dir`: Path to output directory.
   - `--model`: Model type to train (currently only U-Net). Default is "Unet".
   - `--checkpoint`: Path to checkpoint file matching `--model`. Only necessary if continuing a model training.
     Default is `None`.
-  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs. 
+  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs.
     Multiple GPU IDs have to be listed separated by spacebar (e.g. `2 5 9`). If you want to use the CPU you have
     to use "cpu". Default is "cpu".
   - `--epochs`: Number of training epochs. Default is 5.
@@ -155,7 +155,7 @@ U-Net with a minimal working example. `aisegcell_train` is available if you acti
   - `--transform_intensity`: If flag is used random intensity transformations will be applied to input images.
   - `--seed`: None or Int to use for random seeding. Default is `None`.
 
-The command `aisegcell_generate_list` can be used to write CSV files for `--data` and `--data_val` and 
+The command `aisegcell_generate_list` can be used to write CSV files for `--data` and `--data_val` and
 has the following arguments:
   - `--help`: show help message
   - `--bf`: Path ([`glob`](https://docs.python.org/3/library/glob.html) pattern) to input images (e.g. bright field). Naming convention must match naming convention of `--mask`.
@@ -236,7 +236,7 @@ The output of `aisegcell_train` will be stored in subdirectories `{DATE}_Unet_{I
     - `loss_val_step`: validation loss (binary cross-entropy) per validation mini-batch
     - `f1_step`: [f1 score](https://www.biorxiv.org/content/10.1101/803205v2) per validation mini-batch
     - `iou_step`: average of `iou_small_step` and `iou_big_step` per validation mini-batch
-    - `iou_big_step`: [intersection over union](https://www.biorxiv.org/content/10.1101/803205v2) of objects with 
+    - `iou_big_step`: [intersection over union](https://www.biorxiv.org/content/10.1101/803205v2) of objects with
       \> 2000 px in size per validation mini-batch
     - `iou_small_step`: [intersection over union](https://www.biorxiv.org/content/10.1101/803205v2) of objects
       with <= 2000 px in size per validation mini-batch
@@ -262,18 +262,18 @@ We provide trained models:
 | whole cell segmentation | 2D grayscale | <img src="https://github.com/CSDGroup/aisegcell/raw/main/images/cellseg.png" title="example whole cell segmentation" width="180px" align="center"> | Trained on a data set (link to data set) of 224 images (~12k cells). | [ETH Research Collection](https://www.research-collection.ethz.ch/handle/20.500.11850/608646) |
 
 ## Testing
-A trained U-Net can be tested with `aisegcell_test`. We provide a 
+A trained U-Net can be tested with `aisegcell_test`. We provide a
 [notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to test
-with U-Net. `aisegcell_test` returns predicted masks and performance metrics. `aisegcell_test` can be called with the 
+with U-Net. `aisegcell_test` returns predicted masks and performance metrics. `aisegcell_test` can be called with the
 following arguments:
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing test image file paths. The CSV file must have the columns `bf` and
-    `--mask`. 
+    `--mask`.
   - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
-  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs. 
+  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs.
     Multiple GPU IDs have to be listed separated by spacebar (e.g. `2 5 9`). If multiple GPUs are provided only
     the first ID will be used. If you want to use the CPU you have to use "cpu". Default is "cpu".
 
@@ -310,18 +310,18 @@ The output of `aisegcell_test` will be stored in subdirectories `lightning_logs/
   - `test_masks`: directory containing segmentation masks obtained from U-Net
 
 ## Predicting
-A trained U-Net can used for predictions with `aisegcell_predict`. We provide a 
+A trained U-Net can used for predictions with `aisegcell_predict`. We provide a
 [notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to
-predict with U-Net. `aisegcell_predict` returns only predicted masks metrics and can be called with the following 
+predict with U-Net. `aisegcell_predict` returns only predicted masks metrics and can be called with the following
 arguments:
 
   - `--help`: show help message
   - `--data`: Path to CSV file containing predict image file paths. The CSV file must have the columns `bf` and
-    `--mask`. 
+    `--mask`.
   - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
-  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs. 
+  - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs.
     Multiple GPU IDs have to be listed separated by spacebar (e.g. `2 5 9`). If multiple GPUs are provided only
     the first ID will be used. If you want to use the CPU you have to use "cpu". Default is "cpu".
 
@@ -356,7 +356,7 @@ The output of `aisegcell_predict` will be stored in subdirectories `lightning_lo
   - `predicted_masks`: directory containing segmentation masks obtained from U-Net
 
 ### napari plugin
-`aisegcell_predict` is also available as a plug-in for `napari` (link to napari-hub page and github page). 
+`aisegcell_predict` is also available as a plug-in for `napari` (link to napari-hub page and github page).
 
 ## Image annotation tools
 Available tools to annotate segmentations include:
