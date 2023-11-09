@@ -10,6 +10,9 @@ Please cite [this paper](#citation) if you are using this code in your research.
 
 ## Contents
   - [Installation](#installation)
+    - [Virtual environment](#virtual-environment-setup)
+    - [pip installation](#pip-installation)
+    - [Source installation](#source-installation)
   - [Data](#data)
   - [Training](#training)
     - [Trained models](#trained-models)
@@ -21,29 +24,75 @@ Please cite [this paper](#citation) if you are using this code in your research.
   - [Citation](#citation)
 
 ## Installation
-Installation requires a command line application (e.g. `Terminal`) with
-[`git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [python](https://www.python.org) installed.
 If you do not have python installed already, we recommend installing it using the
-[Anaconda distribution](https://www.anaconda.com/products/distribution). If you operate on `Windows` we recommend using
-[`Ubuntu on Windows`](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview).
-Alternatively, you can install [`Anaconda`](https://docs.anaconda.com/anaconda/user-guide/getting-started/) and
-use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found
-[here](https://www.w3schools.com/git/default.asp?remote=github).
+[Anaconda distribution](https://www.anaconda.com/products/distribution). `aisegcell` was tested with `python 3.8.6`.
 
-1) We recommend using a [virtual environment](https://realpython.com/python-virtual-environments-a-primer/).
-[Here](https://testdriven.io/blog/python-environments/) is a list of different python virtual environment tools.
-`aisegcell` was tested with `python 3.8.6`. Open your command line application and create a (e.g. `conda`) virtual
-environment
+### Virtual environment setup
+If you do not use and IDE that handles [virtual environments](https://realpython.com/python-virtual-environments-a-primer/)
+for you (e.g. [PyCharm](https://www.jetbrains.com/pycharm/)) use your command line application (e.g. `Terminal`) and
+one of the many virtual environment tools (see [here](https://testdriven.io/blog/python-environments/)). We will
+use `conda`
+
+1) Create new virtual environment
 
     ```bash
-    conda create -n aisegcell python=3.8
+    conda create -n aisegcell python=3.8.6
     ```
 
-2) Activate your virtual environment
+2) Activate virtual environment
 
     ```bash
     conda activate aisegcell
     ```
+
+### pip installation
+Recommended if you do not want to develop the `aisegcell` code base.
+
+3) Install `aisegcell`
+    ```bash
+    # update pip
+    pip install -U pip==23.2.1
+    pip install aisegcell
+    ```
+
+4) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for
+`Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible
+([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
+ [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and
+ update their drivers if necessary.
+
+5) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system.
+`aisegcell` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version
+`11.3.1`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
+
+```bash
+# Windows/Linux CPU
+pip install torch==1.10.2+cpu torchvision==0.11.3+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+
+# Windows/Linux GPU (CUDA 11.3.X)
+pip install torch==1.10.2+cu113 torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+
+# macOS CPU
+pip install torch==1.10.2 torchvision==0.11.3
+
+```
+
+6) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `aisegcell` was tested with version `1.5.9`.
+
+```bash
+# note the installation of v1.5.9 does not use pip install lightning
+pip install pytorch-lightning==1.5.9
+```
+
+
+### Source installation
+Installation requires a command line application (e.g. `Terminal`) with
+[`git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [python](https://www.python.org) installed.
+If you operate on `Windows` we recommend using
+[`Ubuntu on Windows`](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview).
+Alternatively, you can install [`Anaconda`](https://docs.anaconda.com/anaconda/user-guide/getting-started/) and
+use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` and GitHub can be found
+[here](https://www.w3schools.com/git/default.asp?remote=github).
 
 3) (Optional) If you use `Anaconda Powershell Prompt`, install `git` through `conda`
 
