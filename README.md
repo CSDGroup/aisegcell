@@ -175,7 +175,7 @@ for a data example.
 ## Training
 Training U-Net is as simple as calling the command `aisegcell_train`. We provide a
 [notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to train
-U-Net with a minimal working example. `aisegcell_train` is available if you activate the virtual environment you
+U-Net with a minimal working example (~10 min). `aisegcell_train` is available if you activate the virtual environment you
 [installed](#installation) and can be called with the following arguments:
 
   - `--help`: show help message
