@@ -25,7 +25,8 @@ Please cite [this paper](#citation) if you are using this code in your research.
 
 ## Installation
 If you do not have python installed already, we recommend installing it using the
-[Anaconda distribution](https://www.anaconda.com/products/distribution). `aisegcell` was tested with `python 3.8.6`.
+[Anaconda distribution](https://www.anaconda.com/products/distribution). Installing `aisegcell` takes ~5 min and
+was tested with `python 3.8.6`.
 
 ### Virtual environment setup
 If you do not use and IDE that handles [virtual environments](https://realpython.com/python-virtual-environments-a-primer/)
