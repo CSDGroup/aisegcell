@@ -362,12 +362,12 @@ The output of `aisegcell_test` will be stored in subdirectories `lightning_logs/
 ## Predicting
 A trained U-Net can used for predictions with `aisegcell_predict`. We provide a
 [notebook](https://github.com/CSDGroup/aisegcell/blob/main/notebooks/unet_example.ipynb) on how to
-predict with U-Net. `aisegcell_predict` returns only predicted masks metrics and can be called with the following
+predict with U-Net. `aisegcell_predict` returns only predicted masks (no metrics) and can be called with the following
 arguments:
 
   - `--help`: show help message
-  - `--data`: Path to CSV file containing predict image file paths. The CSV file must have the columns `bf` and
-    `--mask`.
+  - `--data`: Path to CSV file containing predict image file paths. The CSV file must have the column `bf`. If
+    the CSV file contains additional columns (e.g. `mask`) they will be ignored.
   - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
@@ -386,7 +386,8 @@ conda activate aisegcell
 # generate CSV file for data
 aisegcell_generate_list \
   --bf "/path/to/predict_images/*.png" \
-  --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for aisegcell_generate_list \
+  --mask "/path/to/predict_images/*.png" # necessary to provide "--mask" for aisegcell_generate_list but will be
+  ignored by aisegcell_predict \
   --out /path/to/output_directory \
   --prefix predict
 
