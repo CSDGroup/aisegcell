@@ -13,9 +13,9 @@ import re
 from datetime import date
 from typing import List, Tuple
 
-import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.loggers import CSVLogger
+import lightning.pytorch as pl
+from lightning.pytorch import ModelCheckpoint
+from lightning.pytorch import CSVLogger
 
 from aisegcell.models.unet import LitUnet
 from aisegcell.utils.callbacks import CheckpointCallback

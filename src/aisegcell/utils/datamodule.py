@@ -16,7 +16,7 @@ from typing import BinaryIO, List, Optional, Tuple, Union
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pytorch_lightning as pl
+import lightning.pytorch as pl
 import torch
 from PIL import Image
 from skimage import io

@@ -10,7 +10,7 @@ import math
 import os
 from typing import List
 
-import pytorch_lightning as pl
+import lightning.pytorch as pl
 import torch
 import torch.nn.functional as F
 from torch import nn
