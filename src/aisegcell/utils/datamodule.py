@@ -38,9 +38,9 @@ class Dataset:
     def __init__(
         self,
         path_data: Union[str, pathlib.PosixPath, pathlib.WindowsPath],
-        transform_both: Optional[transforms.transforms.Compose] = None,
-        transform_img: Optional[transforms.transforms.Compose] = None,
-        transform_mask: Optional[transforms.transforms.Compose] = None,
+        transform_both: Optional[transforms.Compose] = None,
+        transform_img: Optional[transforms.Compose] = None,
+        transform_mask: Optional[transforms.Compose] = None,
         shape: Tuple[int, int] = (512, 512),
         bit_depth: int = 8,
     ):
@@ -51,11 +51,11 @@ class Dataset:
         ----------
         path_data : Union[str, pathlib.PosixPath, pathlib.WindowsPath]
             path to csv file with images and masks.
-        transform_both : Optional[transforms.transforms.Compose], optional
+        transform_both : Optional[transforms.Compose], optional
             transformation which are applied to image and mask
-        transform_img : Optional[transforms.transforms.Compose], optional
+        transform_img : Optional[transforms.Compose], optional
             transformation which are applied to image only
-        transform_mask : Optional[transforms.transforms.Compose], optional
+        transform_mask : Optional[transforms.Compose], optional
             transformation which are applied to mask only
         shape : Tuple[int, int], optional
             height and width which all images and masks will have in the end. The default is (512, 512).
@@ -84,18 +84,18 @@ class Dataset:
         # transformation
         if transform_both is not None:
             assert (
-                type(transform_both) == transforms.transforms.Compose
-            ), f'transform_both should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_both)}".'
+                type(transform_both) == transforms.Compose
+            ), f'transform_both should be of type "torchvision.transforms.Compose" but is of type "{type(transform_both)}".'
 
         if transform_img is not None:
             assert (
-                type(transform_img) == transforms.transforms.Compose
-            ), f'transform_img should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_img)}".'
+                type(transform_img) == transforms.Compose
+            ), f'transform_img should be of type "torchvision.transforms.Compose" but is of type "{type(transform_img)}".'
 
         if transform_mask is not None:
             assert (
-                type(transform_mask) == transforms.transforms.Compose
-            ), f'transform_mask should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_mask)}".'
+                type(transform_mask) == transforms.Compose
+            ), f'transform_mask should be of type "torchvision.transforms.Compose" but is of type "{type(transform_mask)}".'
 
         # assert shape
         assert (

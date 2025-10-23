@@ -14,8 +14,8 @@ from datetime import date
 from typing import List, Tuple
 
 import lightning.pytorch as pl
-from lightning.pytorch import ModelCheckpoint
-from lightning.pytorch import CSVLogger
+from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.loggers import CSVLogger
 
 from aisegcell.models.unet import LitUnet
 from aisegcell.utils.callbacks import CheckpointCallback
@@ -222,11 +222,9 @@ def train():
         gpus = None
         strategy = None
         sync_batchnorm = False
-        num_processes = 1  # NOTE: currently not intended to support multi-process CPU training
     else:
         accelerator = "gpu"
         gpus = [int(device) for device in devices]
-        num_processes = len(gpus)
 
     # assert correct setup for multiprocessing
     if multiprocessing:
@@ -244,7 +242,6 @@ def train():
     elif accelerator == "gpu":
         gpus = 1
         strategy = None
-        num_processes = 1
         sync_batchnorm = False
 
     # set up data
@@ -321,9 +318,8 @@ def train():
         max_epochs=epochs,
         default_root_dir=output_base_dir,
         accelerator=accelerator,
-        gpus=gpus,
+        devices=gpus,
         strategy=strategy,
-        num_processes=num_processes,
         # deterministic=deterministic,
         logger=logger,
         callbacks=[
@@ -435,7 +431,7 @@ def _initialise_inferrence(
     trainer = pl.Trainer(
         default_root_dir=output_base_dir,
         accelerator=accelerator,
-        gpus=gpus,
+        devices=gpus,
         logger=logger,
     )
 
