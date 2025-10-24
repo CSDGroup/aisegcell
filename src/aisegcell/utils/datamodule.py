@@ -11,12 +11,12 @@
 import pathlib
 import random
 from os import path
-from typing import BinaryIO, List, Optional, Tuple, Union
+from typing import BinaryIO, Union
 
+import lightning.pytorch as pl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import lightning.pytorch as pl
 import torch
 from PIL import Image
 from skimage import io
@@ -38,10 +38,10 @@ class Dataset:
     def __init__(
         self,
         path_data: Union[str, pathlib.PosixPath, pathlib.WindowsPath],
-        transform_both: Optional[transforms.Compose] = None,
-        transform_img: Optional[transforms.Compose] = None,
-        transform_mask: Optional[transforms.Compose] = None,
-        shape: Tuple[int, int] = (512, 512),
+        transform_both: transforms.Compose | None = None,
+        transform_img: transforms.Compose | None = None,
+        transform_mask: transforms.Compose | None = None,
+        shape: tuple[int, int] = (512, 512),
         bit_depth: int = 8,
     ):
         """
@@ -57,7 +57,7 @@ class Dataset:
             transformation which are applied to image only
         transform_mask : Optional[transforms.Compose], optional
             transformation which are applied to mask only
-        shape : Tuple[int, int], optional
+        shape : tuple[int, int], optional
             height and width which all images and masks will have in the end. The default is (512, 512).
         bit_depth : int, optional
             Bit depth of gray scale input images. The default is 8.
@@ -71,10 +71,8 @@ class Dataset:
         super().__init__()
 
         # assert input path
-        assert type(path_data) in (
-            str,
-            pathlib.PosixPath,
-            pathlib.WindowsPath,
+        assert isinstance(
+            path_data, str | pathlib.PosixPath | pathlib.WindowsPath
         ), f'path_data should be of type "str"/"pathlib.PosixPath"/"pathlib.WindowsPath" but is of type "{type(path_data)}".'
 
         assert path.exists(
@@ -82,32 +80,29 @@ class Dataset:
         ), f'path_data does not exist, you typed: "{path_data}".'
 
         # transformation
-        if transform_both is not None:
-            assert (
-                type(transform_both) == transforms.Compose
-            ), f'transform_both should be of type "torchvision.transforms.Compose" but is of type "{type(transform_both)}".'
+        assert isinstance(
+            transform_both, transforms.Compose | None
+        ), f'transform_both should be of type "torchvision.transforms.Compose" but is of type "{type(transform_both)}".'
 
-        if transform_img is not None:
-            assert (
-                type(transform_img) == transforms.Compose
-            ), f'transform_img should be of type "torchvision.transforms.Compose" but is of type "{type(transform_img)}".'
+        assert isinstance(
+            transform_img, transforms.Compose | None
+        ), f'transform_img should be of type "torchvision.transforms.Compose" but is of type "{type(transform_img)}".'
 
-        if transform_mask is not None:
-            assert (
-                type(transform_mask) == transforms.Compose
-            ), f'transform_mask should be of type "torchvision.transforms.Compose" but is of type "{type(transform_mask)}".'
+        assert isinstance(
+            transform_mask, transforms.Compose | None
+        ), f'transform_mask should be of type "torchvision.transforms.Compose" but is of type "{type(transform_mask)}".'
 
         # assert shape
-        assert (
-            type(shape) == tuple
+        assert isinstance(
+            shape, tuple
         ), f'type of shape should be tuple instead it is of type: "{type(shape)}".'
 
         assert all(
             isinstance(i, int) for i in shape
         ), "values of shape should be of type integer."
 
-        assert (
-            type(bit_depth) == int
+        assert isinstance(
+            bit_depth, int
         ), f'type of bit_depth should be int instead it is of type: "{type(bit_depth)}".'
 
         self.path_data = path_data
@@ -209,7 +204,7 @@ class Dataset:
 
         return image_trans, mask_trans
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, int]:
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor, int]:
         """
         read data (csv file)
 
@@ -268,9 +263,13 @@ class Dataset:
 
         """
 
-        assert (
-            type(idx) == random or type(idx) == int
+        assert isinstance(
+            idx, str | int
         ), f'idx must be either a int or "random". Here it is {type(idx)}'
+        if isinstance(idx, str):
+            assert (
+                idx == "random"
+            ), f'idx must be either a int or "random". Here it is {type(idx)}'
 
         if idx == "random":
             idx = random.choice(self.data.index)
@@ -301,8 +300,8 @@ class Dataset_test:
     def __init__(
         self,
         path_data_test: Union[str, pathlib.PosixPath, pathlib.WindowsPath],
-        transform_img: Optional[transforms.transforms.Compose] = None,
-        transform_mask: Optional[transforms.transforms.Compose] = None,
+        transform_img: transforms.Compose | None = None,
+        transform_mask: transforms.Compose | None = None,
         bit_depth: int = 8,
     ):
         """
@@ -312,9 +311,9 @@ class Dataset_test:
         ----------
         path_data_test : Union[str, pathlib.PosixPath, pathlib.WindowsPath]
             path to csv file with images and masks.
-        transform_img : Optional[transforms.transforms.Compose], optional
+        transform_img : Optional[transforms.Compose], optional
             transformation which are applied to image only
-        transform_mask : Optional[transforms.transforms.Compose], optional
+        transform_mask : Optional[transforms.Compose], optional
             transformation which are applied to mask only
         bit_depth : int, optional
             Bit depth of gray scale input images. The default is 8.
@@ -338,18 +337,16 @@ class Dataset_test:
             path_data_test
         ), f'path_data does not exist, you typed: "{path_data_test}".'
 
-        if transform_img is not None:
-            assert (
-                type(transform_img) == transforms.transforms.Compose
-            ), f'transform_img should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_img)}".'
+        assert isinstance(
+            transform_img, transforms.Compose | None
+        ), f'transform_img should be of type "torchvision.transforms.Compose" but is of type "{type(transform_img)}".'
 
-        if transform_mask is not None:
-            assert (
-                type(transform_mask) == transforms.transforms.Compose
-            ), f'transform_mask should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_mask)}".'
+        assert isinstance(
+            transform_mask, transforms.Compose | None
+        ), f'transform_mask should be of type "torchvision.transforms.Compose" but is of type "{type(transform_img)}".'
 
-        assert (
-            type(bit_depth) == int
+        assert isinstance(
+            bit_depth, int
         ), f'type of bit_depth should be int instead it is of type: "{type(bit_depth)}".'
 
         self.path_data_test = path_data_test
@@ -430,7 +427,7 @@ class Dataset_test:
 
         return image_trans, mask_trans
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, int]:
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor, int]:
         """
         read data (csv file)
 
@@ -481,7 +478,7 @@ class Dataset_predict:
     def __init__(
         self,
         path_data_predict: Union[str, pathlib.PosixPath, pathlib.WindowsPath],
-        transform_img: Optional[transforms.transforms.Compose] = None,
+        transform_img: transforms.Compose | None = None,
         bit_depth: int = 8,
     ):
         """
@@ -490,7 +487,7 @@ class Dataset_predict:
         ----------
         path_data_predict : Union[str, pathlib.PosixPath, pathlib.WindowsPath]
             path to prediction data
-        transform_img : Optional[transforms.transforms.Compose], optional
+        transform_img : Optional[transforms.Compose], optional
             transformation which are applied to image only
         bit_depth : int, optional
             Bit depth of gray scale input images. The default is 8.
@@ -514,13 +511,12 @@ class Dataset_predict:
             path_data_predict
         ), f'path to path_predict_data does not exist, you typed: "{path_data_predict}".'
 
-        if transform_img is not None:
-            assert (
-                type(transform_img) == transforms.transforms.Compose
-            ), f'transform_img should be of type "torchvision.transforms.transforms.Compose" but is of type "{type(transform_img)}".'
+        assert isinstance(
+            transform_img, transforms.Compose | None
+        ), f'transform_img should be of type "torchvision.transforms.Compose" but is of type "{type(transform_img)}".'
 
-        assert (
-            type(bit_depth) == int
+        assert isinstance(
+            bit_depth, int
         ), f'type of bit_depth should be int instead it is of type: "{type(bit_depth)}".'
 
         self.path_data_predict = path_data_predict
@@ -585,7 +581,7 @@ class Dataset_predict:
 
         return image_trans
 
-    def __getitem__(self, idx: int) -> Tuple[torch.Tensor]:
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor]:
         """
         read data (csv file)
 
@@ -623,14 +619,14 @@ class DataModule(pl.LightningDataModule):
         self,
         path_data: Union[str, pathlib.PosixPath, pathlib.WindowsPath],
         path_data_val: Union[str, pathlib.PosixPath, pathlib.WindowsPath],
-        path_data_test: Optional[
-            Union[str, pathlib.PosixPath, pathlib.WindowsPath]
-        ] = None,
-        path_data_predict: Optional[
-            Union[str, pathlib.PosixPath, pathlib.WindowsPath]
-        ] = None,
+        path_data_test: (
+            Union[str, pathlib.PosixPath, pathlib.WindowsPath] | None
+        ) = None,
+        path_data_predict: (
+            Union[str, pathlib.PosixPath, pathlib.WindowsPath] | None
+        ) = None,
         batch_size: int = 2,
-        shape: Tuple[int, int] = (512, 512),
+        shape: tuple[int, int] = (512, 512),
         transform_intensity: bool = False,
     ):
         """
@@ -648,7 +644,7 @@ class DataModule(pl.LightningDataModule):
             path to prediction data (csv file). The default is None.
         batch_size : int, optional
             The default is 2.
-        shape : Tuple[int, int], optional
+        shape : tuple[int, int], optional
             The default is (512, 512).
         transform_intensity : bool, optional
             If True random intensity transformations will be applied to image.
@@ -669,7 +665,7 @@ class DataModule(pl.LightningDataModule):
         self.shape = shape
         self.transform_intensity = transform_intensity
 
-    def setup(self, stage: Optional[str] = None):
+    def setup(self, stage: str | None = None):
         """
         Instantiate datasets
 
@@ -804,15 +800,15 @@ class DataModule(pl.LightningDataModule):
 
 
 def save_image_mod(
-    tensor: Union[torch.Tensor, List[torch.Tensor]],
+    tensor: Union[torch.Tensor, list[torch.Tensor]],
     fp: Union[str, pathlib.Path, BinaryIO],
     nrow: int = 8,
     padding: int = 2,
     normalize: bool = False,
-    range: Optional[Tuple[int, int]] = None,
+    vrange: tuple[int, int] | None = None,
     scale_each: bool = False,
     pad_value: int = 0,
-    format: Optional[str] = None,
+    fformat: str | None = None,
 ) -> None:
     """
     torchvision.utils.save_image modified to save gray_scale images.
@@ -828,7 +824,7 @@ def save_image_mod(
         fp: string or file object
             A filename or a file object.
 
-        format(Optional):
+        fformat(Optional):
             If omitted, the format to use is determined from the filename extension. If a file object was used
             instead of a filename, this parameter should always be used.
 
@@ -855,7 +851,7 @@ def save_image_mod(
         padding=padding,
         pad_value=pad_value,
         normalize=normalize,
-        range=range,
+        value_range=vrange,
         scale_each=scale_each,
     )
 
@@ -880,4 +876,4 @@ def save_image_mod(
         )
 
     im = Image.fromarray(ndarr)
-    im.save(fp, format=format)
+    im.save(fp, format=fformat)
