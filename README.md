@@ -64,14 +64,14 @@ Recommended if you do not want to develop the `aisegcell` code base.
 
 5) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system.
 `aisegcell` was tested with `torch` version `2.9.0`, `torchvision` version `0.24.0`, and `cuda` version
-`13.0`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
+`12.6`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
     ```bash
     # Windows/Linux CPU
     pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cpu
 
-    # Windows/Linux GPU (CUDA 13.0)
-    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu130
+    # Windows/Linux GPU (CUDA 12.6)
+    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu126
 
     # macOS CPU
     pip install torch==2.9.0 torchvision==0.24.0
@@ -141,14 +141,14 @@ use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` a
 
 8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system.
 `aisegcell` was tested with `torch` version `2.9.0`, `torchvision` version `0.24.0`, and `cuda` version
-`13.0`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
+`12.6`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
     ```bash
     # Windows/Linux CPU
     pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cpu
 
-    # Windows/Linux GPU (CUDA 13.0)
-    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu130
+    # Windows/Linux GPU (CUDA 12.6)
+    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu126
 
     # macOS CPU
     pip install torch==2.9.0 torchvision==0.24.0

@@ -219,7 +219,7 @@ def train():
     if "cpu" in devices:
         accelerator = "cpu"
         gpus = None
-        strategy = None
+        strategy = "auto"
         sync_batchnorm = False
     else:
         accelerator = "gpu"
@@ -240,7 +240,7 @@ def train():
         strategy = "ddp"
     elif accelerator == "gpu":
         gpus = 1
-        strategy = None
+        strategy = "auto"
         sync_batchnorm = False
 
     # set up data
@@ -319,7 +319,6 @@ def train():
         accelerator=accelerator,
         devices=gpus,
         strategy=strategy,
-        # deterministic=deterministic,
         logger=logger,
         callbacks=[
             checkpoint_best_loss,
