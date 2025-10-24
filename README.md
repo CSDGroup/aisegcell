@@ -26,7 +26,7 @@ Please cite [this paper](#citation) if you are using this code in your research.
 ## Installation
 If you do not have python installed already, we recommend installing it using the
 [Anaconda distribution](https://www.anaconda.com/products/distribution). Installing `aisegcell` takes ~5 min and
-was tested with `python 3.12.7`.
+was tested with `python 3.13.9`.
 
 ### Virtual environment setup
 If you do not use and IDE that handles [virtual environments](https://realpython.com/python-virtual-environments-a-primer/)
@@ -37,7 +37,7 @@ use `conda`
 1) Create new virtual environment
 
     ```bash
-    conda create -n aisegcell python=3.12.7
+    conda create -n aisegcell python=3.13
     ```
 
 2) Activate virtual environment
@@ -52,38 +52,37 @@ Recommended if you do not want to develop the `aisegcell` code base.
 3) Install `aisegcell`
     ```bash
     # update pip
-    pip install -U pip==23.2.1
+    pip install -U pip
     pip install aisegcell
     ```
 
-4) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for
+4) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v2.9.0`) for
 `Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible
 ([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
  [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and
  update their drivers if necessary.
 
 5) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system.
-`aisegcell` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version
-`11.3.1`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
+`aisegcell` was tested with `torch` version `2.9.0`, `torchvision` version `0.24.0`, and `cuda` version
+`13.0`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
-```bash
-# Windows/Linux CPU
-pip install torch==1.10.2+cpu torchvision==0.11.3+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+    ```bash
+    # Windows/Linux CPU
+    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cpu
 
-# Windows/Linux GPU (CUDA 11.3.X)
-pip install torch==1.10.2+cu113 torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+    # Windows/Linux GPU (CUDA 13.0)
+    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu130
 
-# macOS CPU
-pip install torch==1.10.2 torchvision==0.11.3
+    # macOS CPU
+    pip install torch==2.9.0 torchvision==0.24.0
 
-```
+    ```
 
-6) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `aisegcell` was tested with version `1.5.9`.
+6) [Install `lightning`](https://lightning.ai). `aisegcell` was tested with version `2.5.5`.
 
-```bash
-# note the installation of v1.5.9 does not use pip install lightning
-pip install pytorch-lightning==1.5.9
-```
+    ```bash
+    pip install lightning==2.5.5
+    ```
 
 
 ### Source installation
@@ -119,7 +118,7 @@ use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` a
 6) Install `aisegcell`
     ```bash
     # update pip
-    pip install -U pip==23.2.1
+    pip install -U pip
     ```
 
     1) as a user
@@ -134,34 +133,34 @@ use `Anaconda Powershell Prompt`. An introductory tutorial on how to use `git` a
         pre-commit install
         ```
 
-7) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v1.10.2`) for
+7) (Optional) `GPUs` greatly speed up training and inference of U-Net and are available for `torch` (`v2.9.0`) for
 `Windows` and `Linux`. Check if your `GPU(s)` are CUDA compatible
 ([`Windows`](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/#verify-you-have-a-cuda-capable-gpu),
  [`Linux`](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#verify-you-have-a-cuda-capable-gpu)) and
  update their drivers if necessary.
 
 8) [Install `torch`/`torchvision`](https://pytorch.org/get-started/previous-versions/) compatible with your system.
-`aisegcell` was tested with `torch` version `1.10.2`, `torchvision` version `0.11.3`, and `cuda` version
-`11.3.1`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
+`aisegcell` was tested with `torch` version `2.9.0`, `torchvision` version `0.24.0`, and `cuda` version
+`13.0`. Depending on your OS, your `CPU` or `GPU` (and `CUDA` version) the installation may change
 
-```bash
-# Windows/Linux CPU
-pip install torch==1.10.2+cpu torchvision==0.11.3+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+    ```bash
+    # Windows/Linux CPU
+    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cpu
 
-# Windows/Linux GPU (CUDA 11.3.X)
-pip install torch==1.10.2+cu113 torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+    # Windows/Linux GPU (CUDA 13.0)
+    pip install torch==2.9.0 torchvision==0.24.0 --index-url https://download.pytorch.org/whl/cu130
 
-# macOS CPU
-pip install torch==1.10.2 torchvision==0.11.3
+    # macOS CPU
+    pip install torch==2.9.0 torchvision==0.24.0
 
-```
+    ```
 
 9) [Install `pytorch-lightning`](https://www.pytorchlightning.ai). `aisegcell` was tested with version `1.5.9`.
 
-```bash
-# note the installation of v1.5.9 does not use pip install lightning
-pip install pytorch-lightning==1.5.9
-```
+
+    ```bash
+    pip install lightning==2.5.5
+    ```
 
 ## Data
 U-Net is currently intended for single-class semantic segmentation. Input images are expected to be 8-bit or
@@ -278,7 +277,7 @@ aisegcell_train \
 The output of `aisegcell_train` will be stored in subdirectories `{DATE}_Unet_{ID1}/lightning_logs/version_{ID2}/` at
 `--output_base_dir`. Its contents are:
 
-  - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
+  - `hparams.yaml`: stores hyper-parameters of the model (used by `lightning.LightningModule`)
   - `metrics.csv`: contains all metrics tracked during training
     - `loss_step`: training loss (binary cross-entropy) per gradient step
     - `epoch`: training epoch
@@ -320,7 +319,7 @@ following arguments:
   - `--help`: show help message
   - `--data`: Path to CSV file containing test image file paths. The CSV file must have the columns `bf` and
     `--mask`.
-  - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
+  - `--model`: Path to checkpoint file of trained `lightning.LightningModule`.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
   - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs.
@@ -354,7 +353,7 @@ aisegcell_test \
 The output of `aisegcell_test` will be stored in subdirectories `lightning_logs/version_{ID}/` at
 `--output_base_dir`. Its contents are:
 
-  - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
+  - `hparams.yaml`: stores hyper-parameters of the model (used by `lightning.LightningModule`)
   - `metrics.csv`: contains all metrics tracked during testing. Column IDs are identical to `metrics.csv` during
     [training](#training)
   - `test_masks`: directory containing segmentation masks obtained from U-Net
@@ -368,7 +367,7 @@ arguments:
   - `--help`: show help message
   - `--data`: Path to CSV file containing predict image file paths. The CSV file must have the column `bf`. If
     the CSV file contains additional columns (e.g. `mask`) they will be ignored.
-  - `--model`: Path to checkpoint file of trained pytorch_lightning.LightningModule.
+  - `--model`: Path to checkpoint file of trained `lightning.LightningModule`.
   - `--suffix`: Suffix to append to all mask file names.
   - `--output_base_dir`: Path to output directory.
   - `--devices`: Devices to use for model training. If you want to use GPU(s) you have to provide `int` IDs.
@@ -403,7 +402,7 @@ aisegcell_predict \
 The output of `aisegcell_predict` will be stored in subdirectories `lightning_logs/version_{ID}/` at
 `--output_base_dir`. Its contents are:
 
-  - `hparams.yaml`: stores hyper-parameters of the model (used by `pytorch_lightning.LightningModule`)
+  - `hparams.yaml`: stores hyper-parameters of the model (used by `lightning.LightningModule`)
   - `predicted_masks`: directory containing segmentation masks obtained from U-Net
 
 ### napari plugin
