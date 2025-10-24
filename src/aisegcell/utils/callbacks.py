@@ -8,7 +8,7 @@
 # PyTorch Lightning Version: 1.5.9                                                                                    #
 #######################################################################################################################
 import torch
-from pytorch_lightning.callbacks import Callback
+from lightning.pytorch.callbacks import Callback
 
 
 class CheckpointCallback(Callback):

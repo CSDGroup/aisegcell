@@ -11,11 +11,10 @@ import os
 import random
 import re
 from datetime import date
-from typing import List, Tuple
 
-import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.loggers import CSVLogger
+import lightning.pytorch as pl
+from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.loggers import CSVLogger
 
 from aisegcell.models.unet import LitUnet
 from aisegcell.utils.callbacks import CheckpointCallback
@@ -220,13 +219,11 @@ def train():
     if "cpu" in devices:
         accelerator = "cpu"
         gpus = None
-        strategy = None
+        strategy = "auto"
         sync_batchnorm = False
-        num_processes = 1  # NOTE: currently not intended to support multi-process CPU training
     else:
         accelerator = "gpu"
         gpus = [int(device) for device in devices]
-        num_processes = len(gpus)
 
     # assert correct setup for multiprocessing
     if multiprocessing:
@@ -243,8 +240,7 @@ def train():
         strategy = "ddp"
     elif accelerator == "gpu":
         gpus = 1
-        strategy = None
-        num_processes = 1
+        strategy = "auto"
         sync_batchnorm = False
 
     # set up data
@@ -321,10 +317,8 @@ def train():
         max_epochs=epochs,
         default_root_dir=output_base_dir,
         accelerator=accelerator,
-        gpus=gpus,
+        devices=gpus,
         strategy=strategy,
-        num_processes=num_processes,
-        # deterministic=deterministic,
         logger=logger,
         callbacks=[
             checkpoint_best_loss,
@@ -391,11 +385,11 @@ def _args_inference():
 def _initialise_inferrence(
     data: str,
     model: str,
-    devices: List[str],
+    devices: list[str],
     output_base_dir: str,
     suffix: str,
     napari: bool = False,
-) -> Tuple[pl.Trainer, pl.LightningModule, pl.LightningDataModule]:
+) -> tuple[pl.Trainer, pl.LightningModule, pl.LightningDataModule]:
     """
     Construct trainer, model, and data module for testing/predicting
     """
@@ -407,11 +401,11 @@ def _initialise_inferrence(
 
     if "cpu" in devices:
         accelerator = "cpu"
-        gpus = None
+        devs = 1
     else:
         accelerator = "gpu"
         gpus = [int(device) for device in devices]
-        gpus = gpus[:1]  # test only on one gpu
+        devs = gpus[:1]  # test only on one gpu
 
     # load model
     if os.path.isfile(model):
@@ -435,7 +429,7 @@ def _initialise_inferrence(
     trainer = pl.Trainer(
         default_root_dir=output_base_dir,
         accelerator=accelerator,
-        gpus=gpus,
+        devices=devs,
         logger=logger,
     )
 
@@ -445,7 +439,7 @@ def _initialise_inferrence(
 def test(
     data: str,
     model: str,
-    devices: List[str],
+    devices: list[str],
     output_base_dir: str,
     suffix: str,
 ) -> None:
@@ -465,7 +459,7 @@ def test(
 def predict(
     data: str,
     model: str,
-    devices: List[str],
+    devices: list[str],
     output_base_dir: str,
     suffix: str,
     napari: bool = False,
