@@ -421,4 +421,18 @@ In case you are experiencing issues with `aisegcell` inform us via the [issue tr
 Before you submit an issue, check if it has been addressed in a previous issue.
 
 ## Citation
-t.b.d.
+```
+@article{10.1371/journal.pcbi.1012361,
+    doi = {10.1371/journal.pcbi.1012361},
+    author = {Schirmacher, Daniel AND Armagan, Ümmünur AND Zhang, Yang AND Kull, Tobias AND Auler, Markus AND Schroeder, Timm},
+    journal = {PLOS Computational Biology},
+    publisher = {Public Library of Science},
+    title = {aiSEGcell: User-friendly deep learning-based segmentation of nuclei in transmitted light images},
+    year = {2024},
+    month = {08},
+    volume = {20},
+    url = {https://doi.org/10.1371/journal.pcbi.1012361},
+    pages = {1-28},
+    number = {8},
+}
+```
